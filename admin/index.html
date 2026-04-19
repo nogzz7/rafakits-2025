@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Rafakits25</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0b0b0b; color: #f5f5f5; font-family: system-ui, sans-serif; padding: 2rem; }
+    .container { max-width: 1000px; margin: 0 auto; background: #121212; padding: 2rem; border-radius: 20px; }
+    h1, h2 { color: #ffd700; margin-bottom: 1rem; }
+    form { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+    input, select, textarea, button { padding: 0.8rem; border-radius: 8px; border: 1px solid #ffd700; background: #1e1e1e; color: white; }
+    button { background: #ffd700; color: #000; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:hover { background: #e0c200; }
+    .sizes-group { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .sizes-group label { display: flex; align-items: center; gap: 0.5rem; background: #1e1e1e; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+    .product-list { margin-top: 2rem; border-top: 1px solid #333; padding-top: 1rem; }
+    .product-item { background: #1e1e1e; margin: 0.8rem 0; padding: 1rem; border-radius: 8px; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .product-item img { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; background: #fff; }
+    .image-upload-area { background: #2a2a2a; padding: 1rem; border-radius: 8px; cursor: pointer; text-align: center; }
+    .image-preview { max-width: 150px; margin-top: 0.5rem; }
+    .login { display: block; }
+    .admin-panel { display: none; }
+  </style>
+</head>
+<body>
+<div class="container" id="app">
+  <div class="login" id="loginDiv">
+    <h2>🔐 Acesso Administrativo</h2>
+    <input type="password" id="adminPassword" placeholder="Senha administrativa">
+    <button onclick="doLogin()">Entrar</button>
+  </div>
+
+  <div class="admin-panel" id="adminPanel">
+    <h1>➕ Cadastrar Produto</h1>
+    <form id="productForm">
+      <input type="text" id="name" placeholder="Nome do produto" required>
+      <input type="number" step="0.01" id="price" placeholder="Preço (R$)" required>
+      <input type="number" step="0.01" id="originalPrice" placeholder="Preço original (opcional)">
+      
+      <!-- Upload de imagem -->
+      <div class="image-upload-area" id="uploadArea">
+        📸 Clique para selecionar a imagem do produto
+        <input type="file" id="imageFile" accept="image/*" style="display: none;">
+      </div>
+      <input type="text" id="imageUrl" placeholder="Ou cole a URL da imagem diretamente">
+      <div id="imagePreview" class="image-preview"></div>
+
+      <!-- Seleção de tamanhos -->
+      <label>Tamanhos disponíveis:</label>
+      <div class="sizes-group">
+        <label><input type="checkbox" value="P"> P</label>
+        <label><input type="checkbox" value="M"> M</label>
+        <label><input type="checkbox" value="G"> G</label>
+        <label><input type="checkbox" value="GG"> GG</label>
+        <label><input type="checkbox" value="XG"> XG</label>
+      </div>
+
+      <select id="collection">
+        <option value="colecao-30-1">30.1 Premium</option>
+        <option value="oversized">Oversized</option>
+        <option value="shorts-calcas">Shorts e Calças</option>
+      </select>
+      <textarea id="description" placeholder="Descrição do produto"></textarea>
+      <button type="submit">💾 Salvar Produto</button>
+    </form>
+
+    <div class="product-list">
+      <h2>📦 Produtos Cadastrados</h2>
+      <div id="productsList">Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = '/.netlify/functions/products';
+  let currentPassword = '';
+
+  async function doLogin() {
+    const password = document.getElementById('adminPassword').value;
+    const res = await fetch('/.netlify/functions/admin-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (data.authenticated) {
+      currentPassword = password;
+      document.getElementById('loginDiv').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      loadProducts();
+    } else {
+      alert('Senha incorreta');
+    }
+  }
+
+  async function loadProducts() {
+    const res = await fetch(API_BASE);
+    const products = await res.json();
+    const container = document.getElementById('productsList');
+    if (!products.length) {
+      container.innerHTML = '<p>Nenhum produto cadastrado.</p>';
+      return;
+    }
+    container.innerHTML = products.map(p => {
+      let sizes = [];
+      try { sizes = JSON.parse(p.sizes || '[]'); } catch(e) { sizes = []; }
+      return `
+        <div class="product-item">
+          <img src="${p.image || 'https://placehold.co/60x60/111/ffd700?text=Sem+Imagem'}" onerror="this.src='https://placehold.co/60x60/111/ffd700?text=Erro'">
+          <div style="flex:1">
+            <strong>${p.name}</strong><br>
+            Preço: R$ ${p.price} | Coleção: ${p.collection}<br>
+            Tamanhos: ${sizes.join(', ') || 'Não definido'}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Upload para ImgBB (opcional – use sua chave)
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('imageFile');
+  const imageUrlInput = document.getElementById('imageUrl');
+  const previewDiv = document.getElementById('imagePreview');
+
+  uploadArea.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => { previewDiv.innerHTML = `<img src="${e.target.result}" style="max-width:150px; border-radius:8px;">`; };
+    reader.readAsDataURL(file);
+    const formData = new FormData();
+    formData.append('image', file);
+    try {
+      const res = await fetch('https://api.imgbb.com/1/upload?key=SUA_API_KEY_IMG_BB', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        imageUrlInput.value = data.data.url;
+        alert('Imagem enviada! URL preenchida.');
+      } else alert('Erro no upload. Preencha manualmente.');
+    } catch (err) { alert('Erro ao enviar. Preencha manualmente.'); }
+  });
+
+  document.getElementById('productForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const price = parseFloat(document.getElementById('price').value);
+    const originalPrice = parseFloat(document.getElementById('originalPrice').value) || null;
+    const image = imageUrlInput.value;
+    const collection = document.getElementById('collection').value;
+    const description = document.getElementById('description').value;
+    const sizes = Array.from(document.querySelectorAll('.sizes-group input:checked')).map(cb => cb.value);
+    if (!image) { alert('Adicione uma URL de imagem.'); return; }
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-password': currentPassword },
+      body: JSON.stringify({ name, price, originalPrice, image, collection, description, sizes })
+    });
+    if (res.ok) {
+      alert('Produto cadastrado!');
+      document.getElementById('productForm').reset();
+      previewDiv.innerHTML = '';
+      imageUrlInput.value = '';
+      loadProducts();
+    } else alert('Erro ao cadastrar.');
+  });
+</script>
+</body>
+</html>

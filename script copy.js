@@ -1,22 +1,16 @@
 // ========== GLOBAL ==========
 let products = [];
 let cart = JSON.parse(localStorage.getItem("rafakits_cart")) || [];
-let currentProduct = null; // produto que está sendo adicionado
-let currentCollection = 'all';
+let selectedShipping = 'free';
+let selectedPaymentMethod = 'whatsapp';
 
-// Elementos do modal
-const modal = document.getElementById('sizeModal');
-const sizeSelect = document.getElementById('product-size');
-const quantityInput = document.getElementById('product-quantity');
-const confirmBtn = document.getElementById('confirmAdd');
-const cancelBtn = document.getElementById('cancelModal');
-
-// ========== BUSCAR PRODUTOS DO BANCO ==========
+// ========== BUSCAR PRODUTOS DO BANCO (NEON) ==========
 async function fetchProducts() {
   try {
     const res = await fetch('/.netlify/functions/products');
     if (!res.ok) throw new Error('Erro ao buscar produtos');
     products = await res.json();
+    // Após carregar, renderizar tudo
     renderProductsForCurrentCollection();
     updateCategoryCounts();
     updateCartUI();
@@ -27,83 +21,54 @@ async function fetchProducts() {
   }
 }
 
-// ========== RENDERIZAR PRODUTOS (com botão que abre modal) ==========
+// Coleção atual (definida pelas tabs)
+let currentCollection = 'all';
+
+function renderProductsForCurrentCollection() {
+  let filtered = products;
+  if (currentCollection !== 'all') {
+    filtered = products.filter(p => p.collection === currentCollection);
+  }
+  renderProducts(filtered, currentCollection);
+}
+
 function renderProducts(productsArray, collectionId) {
   const containerId = collectionId === 'all' ? 'all-grid' :
                       collectionId === 'colecao-30-1' ? '30-grid' :
                       collectionId === 'oversized' ? 'oversized-grid' : 'shorts-grid';
   const container = document.getElementById(containerId);
   if (!container) return;
+
   if (productsArray.length === 0) {
     container.innerHTML = '<p style="text-align:center; grid-column:1/-1;">Nenhum produto encontrado.</p>';
     return;
   }
-  container.innerHTML = productsArray.map(p => {
-    let sizes = [];
-    try { sizes = JSON.parse(p.sizes || '[]'); } catch(e) { sizes = ['P','M','G','GG']; }
-    const sizesText = sizes.join(', ');
-    return `
-      <div class="product-card">
-        <img src="${p.image || 'https://placehold.co/400x500/111/ffd700?text=Produto'}" onerror="this.src='https://placehold.co/400x500/111/ffd700?text=Produto'">
-        <h3>${p.name}</h3>
-        <div>${p.original_price ? `<span class="original-price">R$ ${Number(p.original_price).toFixed(2)}</span>` : ''}<span class="price">R$ ${Number(p.price).toFixed(2)}</span></div>
-        <div style="font-size:0.8rem; color:#aaa; margin:5px 0;">Tamanhos: ${sizesText}</div>
-        <button class="btn-add" onclick="openSizeModal(${JSON.stringify(p).replace(/"/g, '&quot;')})">Adicionar</button>
-      </div>
-    `;
-  }).join('');
+
+  container.innerHTML = productsArray.map(p => `
+    <div class="product-card">
+      <img src="${p.image || 'https://placehold.co/400x500/111/ffd700?text=Produto'}" onerror="this.src='https://placehold.co/400x500/111/ffd700?text=Produto'">
+      <h3>${p.name}</h3>
+      <div>${p.original_price ? `<span class="original-price">R$ ${Number(p.original_price).toFixed(2)}</span>` : ''}<span class="price">R$ ${Number(p.price).toFixed(2)}</span></div>
+      <button class="btn-add" onclick="addToCart({id:'${p.id}', name:'${p.name}', price:${p.price}, image:'${p.image}'})">Adicionar</button>
+    </div>
+  `).join('');
 }
 
-function renderProductsForCurrentCollection() {
-  let filtered = products;
-  if (currentCollection !== 'all') filtered = products.filter(p => p.collection === currentCollection);
-  renderProducts(filtered, currentCollection);
-}
-
-// ========== MODAL DE TAMANHO ==========
-function openSizeModal(product) {
-  currentProduct = product;
-  let sizes = [];
-  try { sizes = JSON.parse(product.sizes || '[]'); } catch(e) { sizes = ['P','M','G','GG']; }
-  sizeSelect.innerHTML = '<option value="">Selecione</option>' + sizes.map(s => `<option value="${s}">${s}</option>`).join('');
-  quantityInput.value = 1;
-  modal.style.display = 'flex';
-}
-
-confirmBtn.onclick = () => {
-  const size = sizeSelect.value;
-  const qty = parseInt(quantityInput.value);
-  if (!size) { alert('Selecione um tamanho'); return; }
-  if (qty < 1) { alert('Quantidade inválida'); return; }
-  addToCartWithSize(currentProduct, size, qty);
-  modal.style.display = 'none';
-};
-
-cancelBtn.onclick = () => { modal.style.display = 'none'; };
-window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-
-// ========== CARRINHO COM TAMANHO ==========
-function addToCartWithSize(product, size, qty) {
-  const existingIndex = cart.findIndex(item => item.id === product.id && item.size === size);
-  if (existingIndex !== -1) {
-    cart[existingIndex].qty += qty;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product.name,
-      price: parseFloat(product.price),
-      size: size,
-      qty: qty,
-      image: product.image
-    });
-  }
-  saveCart();
-  alert(`${product.name} (Tamanho ${size}) x${qty} adicionado!`);
-}
-
+// ========== CARRINHO ==========
 function saveCart() {
   localStorage.setItem("rafakits_cart", JSON.stringify(cart));
   updateCartUI();
+}
+
+function addToCart(product) {
+  const existing = cart.find(item => item.id === product.id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  saveCart();
+  alert(`${product.name} adicionado ao carrinho!`);
 }
 
 function updateCartUI() {
@@ -119,7 +84,7 @@ function updateCartUI() {
     <div style="display:flex; gap:10px; margin-bottom:10px;">
       <img src="${item.image}" width="50" style="object-fit:cover; border-radius:8px;">
       <div style="flex:1">
-        <strong>${item.name}</strong> (${item.size})<br>
+        <strong>${item.name}</strong><br>
         R$ ${item.price} x ${item.qty} = R$ ${(item.price * item.qty).toFixed(2)}<br>
         <button onclick="changeQty(${idx}, -1)">-</button>
         <button onclick="changeQty(${idx}, 1)">+</button>
@@ -138,7 +103,11 @@ window.changeQty = (idx, delta) => {
     saveCart();
   }
 };
-window.removeItem = (idx) => { cart.splice(idx, 1); saveCart(); };
+
+window.removeItem = (idx) => {
+  cart.splice(idx, 1);
+  saveCart();
+};
 
 // ========== ABRIR/FECHAR CARRINHO ==========
 document.getElementById("cart-icon").addEventListener("click", () => {
@@ -150,29 +119,14 @@ document.getElementById("overlay").addEventListener("click", () => {
   document.getElementById("overlay").classList.remove("active");
 });
 
-// ========== CHECKOUT WHATSAPP COM ENDEREÇO ==========
+// ========== CHECKOUT WHATSAPP ==========
 document.getElementById("checkout-btn").addEventListener("click", () => {
   if (!cart.length) return alert("Carrinho vazio");
-  const name = document.getElementById("customer-name").value.trim();
-  const address = document.getElementById("customer-address").value.trim();
-  const phone = document.getElementById("customer-phone").value.trim();
-  if (!name || !address || !phone) {
-    alert("Preencha nome, endereço e telefone para finalizar o pedido");
-    return;
-  }
-  let msg = "🛍️ *PEDIDO RAFAKITS25*%0A%0A";
-  msg += `*Cliente:* ${name}%0A`;
-  msg += `*Endereço:* ${address}%0A`;
-  msg += `*WhatsApp:* ${phone}%0A%0A`;
-  msg += `*📦 ITENS:*%0A`;
-  cart.forEach(i => {
-    msg += `▫️ ${i.name} (${i.size}) x${i.qty} = R$ ${(i.price * i.qty).toFixed(2)}%0A`;
-  });
+  let msg = "🛍️ PEDIDO RAFAKITS25%0A";
+  cart.forEach(i => msg += `${i.name} x${i.qty} = R$ ${(i.price * i.qty).toFixed(2)}%0A`);
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  msg += `%0A*💰 TOTAL: R$ ${total.toFixed(2)}*%0A%0A`;
-  msg += `*💳 PAGAMENTO:* PIX via WhatsApp%0A`;
-  msg += `✅ Aguardo a chave PIX para confirmar o pedido.`;
-  window.open(`https://wa.me/553399953164?text=${encodeURIComponent(msg)}`, "_blank");
+  msg += `%0ATOTAL: R$ ${total.toFixed(2)}%0A%0APagamento via PIX (WhatsApp)`;
+  window.open(`https://wa.me/553399953164?text=${msg}`, "_blank");
 });
 
 // ========== TABS COLEÇÕES ==========
@@ -249,23 +203,36 @@ function updateHero(index) {
   heroNumbers.textContent = String(index + 1).padStart(2, '0');
   currentSlide = index;
 }
+
 function nextHero() { updateHero((currentSlide + 1) % heroItems.length); }
 function prevHero() { updateHero((currentSlide - 1 + heroItems.length) % heroItems.length); }
-document.getElementById('hero-next').addEventListener('click', () => { clearInterval(autoInterval); nextHero(); startAuto(); });
-document.getElementById('hero-prev').addEventListener('click', () => { clearInterval(autoInterval); prevHero(); startAuto(); });
-heroDots.forEach((dot, i) => dot.addEventListener('click', () => { clearInterval(autoInterval); updateHero(i); startAuto(); }));
+
+document.getElementById('hero-next').addEventListener('click', () => {
+  clearInterval(autoInterval);
+  nextHero();
+  startAuto();
+});
+document.getElementById('hero-prev').addEventListener('click', () => {
+  clearInterval(autoInterval);
+  prevHero();
+  startAuto();
+});
+heroDots.forEach((dot, i) => dot.addEventListener('click', () => {
+  clearInterval(autoInterval);
+  updateHero(i);
+  startAuto();
+}));
+
 function startAuto() { autoInterval = setInterval(nextHero, 5000); }
 startAuto();
 
-// ========== ADICIONAR PRODUTOS DO CARROSSEL AO CARRINHO (com tamanho padrão) ==========
+// ========== ADICIONAR PRODUTOS DO CARROSSEL AO CARRINHO ==========
 document.querySelectorAll('.add-to-cart-hero').forEach(btn => {
   btn.addEventListener('click', () => {
     const name = btn.dataset.name;
     const price = parseFloat(btn.dataset.price);
     const img = btn.dataset.img;
-    // Para produtos do carrossel, abrir modal de tamanho também
-    const product = { id: name.replace(/\s/g, ''), name, price, image: img, sizes: '["P","M","G","GG"]' };
-    openSizeModal(product);
+    addToCart({ id: name.replace(/\s/g, ''), name, price, image: img });
   });
 });
 
@@ -273,7 +240,7 @@ document.querySelectorAll('.add-to-cart-hero').forEach(btn => {
 async function init() {
   buildTabs();
   buildCategories();
-  await fetchProducts();
+  await fetchProducts(); // carrega produtos do banco
   updateCartUI();
 }
 init();

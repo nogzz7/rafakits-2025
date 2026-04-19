@@ -2,22 +2,6 @@
   "name": "rafakits25",
   "version": "1.0.0",
   "dependencies": {
-    "pg": "^8.20.0"
-  },
-  "description": "��#\u0000 \u0000r\u0000a\u0000f\u0000a\u0000k\u0000i\u0000t\u0000s\u0000-\u00002\u00000\u00002\u00005\u0000\r\u0000 \u0000#\u0000 \u0000r\u0000a\u0000f\u0000a\u0000k\u0000i\u0000t\u0000s\u0000-\u00002\u00000\u00002\u00005\u0000\r\u0000 \u0000#\u0000 \u0000r\u0000a\u0000f\u0000a\u0000k\u0000i\u0000t\u0000s\u0000-\u00002\u00000\u00002\u00005\u0000\r\u0000 \u0000",
-  "main": "script.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nogzz7/rafakits-2025.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/nogzz7/rafakits-2025/issues"
-  },
-  "homepage": "https://github.com/nogzz7/rafakits-2025#readme"
+    "pg": "^8.11.3"
+  }
 }

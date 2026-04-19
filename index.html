@@ -6,25 +6,27 @@
   <title>Rafakits25 • Streetwear e Camisas de Time</title>
   <meta name="description" content="Rafakits25 - Streetwear autêntico, camisas de time, coleção 30.1 Premium, oversized e muito mais.">
   
-  <!-- Supabase SDK (opcional) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- CSS principal -->
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Modal de tamanho */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; }
+    .modal-content { background: #121212; padding: 2rem; border-radius: 20px; max-width: 400px; width: 90%; text-align: center; }
+    .modal-content select, .modal-content input { width: 100%; margin: 0.5rem 0; padding: 0.8rem; border-radius: 8px; background: #1e1e1e; color: white; border: 1px solid #ffd700; }
+    .modal-content button { margin: 0.5rem; padding: 0.8rem 1.5rem; background: #ffd700; color: #000; border: none; border-radius: 8px; cursor: pointer; }
+    .address-fields { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #333; }
+    .address-fields input { width: 100%; margin-bottom: 0.5rem; padding: 0.6rem; background: #1e1e1e; border: 1px solid #ffd700; border-radius: 8px; color: white; }
+  </style>
 </head>
 <body>
 
-<!-- ========== HEADER ========== -->
 <header>
   <div class="header-container">
     <div class="header-grid">
       <div class="header-left">
         <button class="mobile-menu-button"><i class="fas fa-bars"></i></button>
-        <img src="public/imagem/logo/1.png" alt="Rafakits25" class="header-logo" onerror="this.src='https://placehold.co/120x60/111/ffd700?text=RAFAKITS25'">
+        <img src="https://i.ibb.co/gLdXY0zV/1.png" alt="Rafakits25" class="header-logo">
         <div class="search-input">
           <input type="text" id="search-input" placeholder="Buscar camisetas, bermudas...">
         </div>
@@ -43,58 +45,45 @@
   </div>
 </header>
 
-<!-- ========== CARROSSEL DE DESTAQUE (FADE) ========== -->
+<!-- Carrossel (igual ao seu, com imagens do ImgBB) -->
 <section class="hero-carousel">
-  <div class="circles">
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-  </div>
+  <div class="circles"><div class="circle"></div><div class="circle"></div><div class="circle"></div><div class="circle"></div></div>
   <div class="hero-container">
     <div class="hero-list">
       <div class="hero-item active">
-        <div class="hero-img">
-          <img src="public/imagem/produtos/brasil1.png" alt="Camisa Brasil">
-        </div>
+        <div class="hero-img"><img src="https://i.ibb.co/wfTKsgw/brasil1.png" alt="Camisa Brasil"></div>
         <div class="hero-content">
           <p class="hero-tag">Novo lançamento</p>
           <p class="hero-name">Camisa Brasil</p>
           <p class="hero-price">R$ 99,90</p>
-          <button class="hero-btn add-to-cart-hero" data-name="Camisa Brasil" data-price="99.90" data-img="public/imagem/produtos/brasil1.png">Comprar</button>
+          <button class="hero-btn add-to-cart-hero" data-name="Camisa Brasil" data-price="99.90" data-img="https://i.ibb.co/wfTKsgw/brasil1.png">Comprar</button>
         </div>
       </div>
       <div class="hero-item">
-        <div class="hero-img">
-          <img src="public/imagem/produtos/brasil.png" alt="Camisa Brasil 2">
-        </div>
+        <div class="hero-img"><img src="https://i.ibb.co/CKKvVFrS/brasil.png" alt="Camisa Brasil 2"></div>
         <div class="hero-content">
           <p class="hero-tag">Novo lançamento</p>
           <p class="hero-name">Camisa Brasil 2</p>
           <p class="hero-price">R$ 99,90</p>
-          <button class="hero-btn add-to-cart-hero" data-name="Camisa Brasil 2" data-price="99.90" data-img="public/imagem/produtos/brasil.png">Comprar</button>
+          <button class="hero-btn add-to-cart-hero" data-name="Camisa Brasil 2" data-price="99.90" data-img="https://i.ibb.co/CKKvVFrS/brasil.png">Comprar</button>
         </div>
       </div>
       <div class="hero-item">
-        <div class="hero-img">
-          <img src="public/imagem/produtos/cruzeiro.png" alt="Camisa Cruzeiro">
-        </div>
+        <div class="hero-img"><img src="https://i.ibb.co/mChbtGyv/cruzeiro.png" alt="Camisa Cruzeiro"></div>
         <div class="hero-content">
           <p class="hero-tag">Novo lançamento</p>
           <p class="hero-name">Camisa Cruzeiro</p>
           <p class="hero-price">R$ 99,90</p>
-          <button class="hero-btn add-to-cart-hero" data-name="Camisa Cruzeiro" data-price="99.90" data-img="public/imagem/produtos/cruzeiro.png">Comprar</button>
+          <button class="hero-btn add-to-cart-hero" data-name="Camisa Cruzeiro" data-price="99.90" data-img="https://i.ibb.co/mChbtGyv/cruzeiro.png">Comprar</button>
         </div>
       </div>
       <div class="hero-item">
-        <div class="hero-img">
-          <img src="public/imagem/produtos/atletico.png" alt="Camisa Atlético Mineiro">
-        </div>
+        <div class="hero-img"><img src="https://i.ibb.co/Xhp4dMJ/atletico.png" alt="Camisa Atlético"></div>
         <div class="hero-content">
           <p class="hero-tag">Novo lançamento</p>
-          <p class="hero-name">Camisa Atlético Mineiro</p>
+          <p class="hero-name">Camisa Atlético</p>
           <p class="hero-price">R$ 99,90</p>
-          <button class="hero-btn add-to-cart-hero" data-name="Camisa Atlético Mineiro" data-price="99.90" data-img="public/imagem/produtos/atletico.png">Comprar</button>
+          <button class="hero-btn add-to-cart-hero" data-name="Camisa Atlético" data-price="99.90" data-img="https://i.ibb.co/Xhp4dMJ/atletico.png">Comprar</button>
         </div>
       </div>
     </div>
@@ -105,23 +94,14 @@
     <div class="hero-indicators">
       <div class="hero-numbers">01</div>
       <div class="hero-dots">
-        <span class="hero-dot active"></span>
-        <span class="hero-dot"></span>
-        <span class="hero-dot"></span>
-        <span class="hero-dot"></span>
+        <span class="hero-dot active"></span><span class="hero-dot"></span><span class="hero-dot"></span><span class="hero-dot"></span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========== IMPACT PHRASE ========== -->
-<div class="impact-phrase">
-  <div class="impact-container">
-    <h1 class="impact-text">Sua referência no estilo está aqui!</h1>
-  </div>
-</div>
+<div class="impact-phrase"><div class="impact-container"><h1 class="impact-text">Sua referência no estilo está aqui!</h1></div></div>
 
-<!-- ========== CATEGORIAS ========== -->
 <section class="categories-section">
   <div class="categories-container">
     <h2 class="categories-title">Navegue por Categoria</h2>
@@ -129,59 +109,49 @@
   </div>
 </section>
 
-<!-- ========== TABS COLEÇÕES ========== -->
 <div class="collections-tabs" id="collections-tabs"></div>
 
-<!-- ========== SEÇÕES DE COLEÇÕES ========== -->
-<section class="collection-section active-section" id="all">
-  <div class="collection-header"><h2 class="collection-title">Todas as Coleções</h2></div>
-  <div class="products-grid" id="all-grid"></div>
-</section>
+<section class="collection-section active-section" id="all"><div class="collection-header"><h2 class="collection-title">Todas as Coleções</h2></div><div class="products-grid" id="all-grid"></div></section>
+<section class="collection-section" id="colecao-30-1"><div class="collection-header"><h2 class="collection-title">30.1 Premium</h2></div><div class="products-grid" id="30-grid"></div></section>
+<section class="collection-section" id="oversized"><div class="collection-header"><h2 class="collection-title">Oversized</h2></div><div class="products-grid" id="oversized-grid"></div></section>
+<section class="collection-section" id="shorts-calcas"><div class="collection-header"><h2 class="collection-title">Shorts e Calças</h2></div><div class="products-grid" id="shorts-grid"></div></section>
 
-<section class="collection-section" id="colecao-30-1">
-  <div class="collection-header"><h2 class="collection-title">30.1 Premium</h2></div>
-  <div class="products-grid" id="30-grid"></div>
-</section>
-
-<section class="collection-section" id="oversized">
-  <div class="collection-header"><h2 class="collection-title">Oversized</h2></div>
-  <div class="products-grid" id="oversized-grid"></div>
-</section>
-
-<section class="collection-section" id="shorts-calcas">
-  <div class="collection-header"><h2 class="collection-title">Shorts e Calças</h2></div>
-  <div class="products-grid" id="shorts-grid"></div>
-</section>
-
-<!-- ========== FOOTER ========== -->
 <footer>
   <div class="footer-content">
-    <div class="footer-column">
-      <h4>Rafakits25</h4>
-      <p>Streetwear que define sua atitude.</p>
-      <div class="social-links">
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-tiktok"></i></a>
-        <a href="#"><i class="fab fa-whatsapp"></i></a>
-      </div>
-    </div>
-    <div class="footer-column">
-      <h4>Contato</h4>
-      <p><i class="fas fa-envelope"></i> rafakits25@gmail.com</p>
-      <p><i class="fas fa-phone"></i> (33)999953164</p>
-    </div>
+    <div class="footer-column"><h4>Rafakits25</h4><p>Streetwear que define sua atitude.</p><div class="social-links"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-tiktok"></i></a><a href="#"><i class="fab fa-whatsapp"></i></a></div></div>
+    <div class="footer-column"><h4>Contato</h4><p><i class="fas fa-envelope"></i> rafakits25@gmail.com</p><p><i class="fas fa-phone"></i> (33)999953164</p></div>
   </div>
   <div class="copyright"><p>&copy; 2025 Rafakits25</p></div>
 </footer>
 
-<!-- ========== CARRINHO LATERAL ========== -->
+<!-- Carrinho lateral -->
 <div class="cart" id="cart-sidebar">
   <h3>Seu Carrinho</h3>
   <div id="cart-items"></div>
+  <div class="address-fields" id="address-fields">
+    <input type="text" id="customer-name" placeholder="Seu nome completo" required>
+    <input type="text" id="customer-address" placeholder="Endereço completo (rua, número, bairro, cidade)" required>
+    <input type="tel" id="customer-phone" placeholder="WhatsApp com DDD" required>
+  </div>
   <div id="cart-total"></div>
-  <button id="checkout-btn" class="btn-add">Finalizar via WhatsApp</button>
+  <button id="checkout-btn" class="btn-add">Finalizar Pedido</button>
 </div>
 <div class="overlay" id="overlay"></div>
+
+<!-- Modal de seleção de tamanho e quantidade -->
+<div id="sizeModal" class="modal">
+  <div class="modal-content">
+    <h3>Escolha o tamanho</h3>
+    <select id="product-size">
+      <option value="">Selecione</option>
+    </select>
+    <input type="number" id="product-quantity" value="1" min="1">
+    <div>
+      <button id="confirmAdd">Adicionar ao carrinho</button>
+      <button id="cancelModal">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
