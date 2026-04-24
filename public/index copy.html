@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Rafakits25 • Streetwear e Camisas de Time</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Swiper CSS (apenas para os banners secundários) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+  
+  <!-- HEADER SUPERIOR -->
+  <div class="header-top">
+    <div class="container">
+      <div class="header-top-content">
+        <div class="discount-tag">
+          <i class="fas fa-bolt"></i>
+          FRETE GRÁTIS PARA TODO BRASIL
+        </div>
+        <div class="header-top-right">
+          <span>Até 6x sem juros no cartão</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- HEADER PRINCIPAL -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">
+          <div class="logo-image-container">
+            <img src="https://i.ibb.co/gLdXY0zV/1.png" alt="Rafakits25 Logo" class="logo-image"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/60/000000/FFFFFF?text=RK25';">
+          </div>
+          <div class="logo-text">
+            <div class="logo-main">RAFA<span>KITS25</span></div>
+            <div class="logo-sub">Streetwear e Camisas de Time</div>
+          </div>
+        </a>
+        
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-box" placeholder="Buscar camisetas, bermudas..." id="search-input">
+        </div>
+        
+        <div class="header-actions">
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-user"></i></div>
+            <span>Minha Conta</span>
+          </a>
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-heart"></i></div>
+            <span>Favoritos</span>
+          </a>
+          <button class="header-action" id="cart-btn">
+            <div class="action-icon">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count">0</span>
+            </div>
+            <span>Carrinho</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- BANNER PRINCIPAL COM CÍRCULOS ANIMADOS (HERO CARROSSEL) -->
+  <section class="hero-carousel">
+    <div class="circles">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-list">
+        <div class="hero-item active">
+          <div class="hero-img"><img src="https://i.ibb.co/wfTKsgw/brasil1.png" alt="Camisa Brasil"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Brasil</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/CKKvVFrS/brasil.png" alt="Camisa Brasil 2"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Brasil 2</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/mChbtGyv/cruzeiro.png" alt="Camisa Cruzeiro"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Cruzeiro</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/Xhp4dMJ/atletico.png" alt="Camisa Atlético"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Atlético</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+      </div>
+      <div class="hero-arrows">
+        <button class="hero-arrow" id="hero-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="hero-arrow" id="hero-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="hero-indicators">
+        <div class="hero-numbers">01</div>
+        <div class="hero-dots">
+          <span class="hero-dot active"></span>
+          <span class="hero-dot"></span>
+          <span class="hero-dot"></span>
+          <span class="hero-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- MINI BANNERS -->
+  <section class="mini-banners section-sm">
+    <div class="container">
+      <div class="mini-banners-grid">
+        <div class="mini-banner">
+          <h3>ENTREGA RÁPIDA</h3>
+          <p>Enviamos para todo Brasil!</p>
+          <a href="#" class="banner-button">Saiba Mais</a>
+        </div>
+        <div class="mini-banner">
+          <h3>PARCELE EM ATÉ 6X</h3>
+          <p>No cartão de crédito, sem juros.</p>
+          <a href="#" class="banner-button">Ver Condições</a>
+        </div>
+        <div class="mini-banner">
+          <h3>SOBRE A RAFÁKITS25</h3>
+          <p>Streetwear que define sua atitude. Cuzinha - MG.</p>
+          <a href="javascript:void(0)" onclick="openAbout()" class="banner-button">Conheça</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- SEÇÃO FLASH SALE - PRODUTOS EM PROMOÇÃO -->
+  <section class="flash-sale-section">
+    <div class="container">
+      <div class="flash-sale-header">
+        <div class="flash-sale-title-group">
+          <div class="flash-sale-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="flash-sale-text">
+            <span class="flash-sale-badge">LIMITED TIME</span>
+            <h2 class="flash-sale-title">OFERTAS <span>IMPERDÍVEIS</span></h2>
+            <p class="flash-sale-subtitle">Até 40% OFF em camisas selecionadas</p>
+          </div>
+        </div>
+        <div class="flash-sale-timer" id="flash-sale-timer">
+          <div class="timer-block">
+            <span class="timer-number" id="timer-days">00</span>
+            <span class="timer-label">Dias</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-hours">00</span>
+            <span class="timer-label">Horas</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-minutes">00</span>
+            <span class="timer-label">Min</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-seconds">00</span>
+            <span class="timer-label">Seg</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flash-sale-products" id="flash-sale-products"></div>
+      
+      <div class="flash-sale-footer">
+        <a href="#" class="btn-view-all" onclick="filterProducts('all')">
+          Ver todas as ofertas <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CATEGORIAS -->
+  <section class="categories-section section" id="categories">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Categorias <span>RAFAKITS25</span></h2>
+        <a href="#" class="section-link">Ver todas as categorias <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="categories-grid" id="categories-grid"></div>
+    </div>
+  </section>
+  
+  <!-- PRODUTOS -->
+  <section class="products-section section" id="products">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Produtos <span>em Destaque</span></h2>
+        <div class="products-filter">
+          <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+          <button class="filter-btn" onclick="filterProducts('times')">Camisas de Time</button>
+          <button class="filter-btn" onclick="filterProducts('oversized')">Oversized</button>
+          <button class="filter-btn" onclick="filterProducts('shorts')">Shorts/Calças</button>
+        </div>
+      </div>
+      <div class="products-grid" id="products-grid"></div>
+    </div>
+  </section>
+  
+  <!-- BENEFÍCIOS -->
+  <section class="benefits-section section">
+    <div class="container">
+      <h2 class="section-title text-center mb-6">Por que escolher a <span>RAFAKITS25</span>?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-tshirt"></i></div>
+          <h3 class="benefit-title">Qualidade Premium</h3>
+          <p class="text-gray">Tecidos selecionados e acabamento impecável em todas as peças.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+          <h3 class="benefit-title">Entrega Rápida</h3>
+          <p class="text-gray">Entregamos para todo Brasil com prazo de 3 a 10 dias úteis.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-credit-card"></i></div>
+          <h3 class="benefit-title">Pagamento Seguro</h3>
+          <p class="text-gray">Site 100% seguro com criptografia e diversas formas de pagamento.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+          <h3 class="benefit-title">Suporte 24/7</h3>
+          <p class="text-gray">Equipe especializada pronta para atender suas dúvidas a qualquer hora.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2 class="newsletter-title">Fique por dentro das novidades</h2>
+        <p class="newsletter-subtitle">Receba ofertas exclusivas, lançamentos e dicas de estilo direto no seu e-mail.</p>
+        <form class="newsletter-form" id="newsletter-form">
+          <input type="email" class="newsletter-input" placeholder="Seu melhor e-mail" required>
+          <button type="submit" class="btn-newsletter"><i class="fas fa-paper-plane"></i> Inscrever-se</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <div class="footer-logo">RAFA<span>KITS25</span></div>
+          <p class="footer-description">Streetwear que define sua atitude. Camisas de time e moda casual com qualidade e estilo.</p>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Links Rápidos</h3>
+          <ul class="footer-links">
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Início</a></li>
+            <li><a href="#products"><i class="fas fa-chevron-right"></i> Produtos</a></li>
+            <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categorias</a></li>
+            <li><a href="#products"><i class="fas fa-chevron-right"></i> Ofertas</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Categorias</h3>
+          <ul class="footer-links">
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Camisas de Time</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Oversized</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Shorts e Calças</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contato</h3>
+          <ul class="contact-info">
+            <li><i class="fas fa-phone"></i><span>(33) 99995-3164<br><small>Seg a Sex: 9h às 18h</small></span></li>
+            <li><i class="fas fa-envelope"></i><span>rafakits25@gmail.com</span></li>
+            <li><i class="fas fa-map-marker-alt"></i><span>Cuzinha - MG</span></li>
+          </ul>
+          <div class="payment-methods">
+            <h4>Formas de Pagamento</h4>
+            <div class="payment-icons">
+              <div class="payment-icon">PIX</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 RAFAKITS25 - Streetwear e Camisas de Time. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- CARRINHO (com apenas PIX) -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2><i class="fas fa-shopping-cart"></i> Seu Carrinho</h2>
+      <button class="cart-btn" onclick="closeCart()" style="font-size: 20px;"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-summary" id="cart-summary"></div>
+    <div class="coupon-section">
+      <div class="coupon-form">
+        <input type="text" class="coupon-input" id="coupon-input" placeholder="Digite seu cupom de desconto">
+        <button class="btn-coupon" onclick="applyCoupon()">Aplicar</button>
+      </div>
+      <div id="coupon-message" style="margin-top: 8px; font-size: 13px;"></div>
+    </div>
+    <div class="checkout-form">
+      <div class="form-group">
+        <label for="customer-name">Nome Completo *</label>
+        <input type="text" id="customer-name" placeholder="Digite seu nome" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-phone">WhatsApp *</label>
+        <input type="tel" id="customer-phone" placeholder="(11) 99999-9999" required>
+      </div>
+      <h4>Endereço de Entrega</h4>
+      <div class="form-group">
+        <label for="customer-cep">CEP *</label>
+        <input type="text" id="customer-cep" placeholder="00000-000" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-address">Endereço *</label>
+        <input type="text" id="customer-address" placeholder="Rua, Av, etc" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customer-number">Número *</label>
+          <input type="text" id="customer-number" placeholder="Nº" required>
+        </div>
+        <div class="form-group">
+          <label for="customer-complement">Complemento</label>
+          <input type="text" id="customer-complement" placeholder="Apto, bloco">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="customer-neighborhood">Bairro *</label>
+        <input type="text" id="customer-neighborhood" placeholder="Bairro" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customer-city">Cidade *</label>
+          <input type="text" id="customer-city" placeholder="Cidade" required>
+        </div>
+        <div class="form-group">
+          <label for="customer-state">UF *</label>
+          <input type="text" id="customer-state" placeholder="UF" maxlength="2" required>
+        </div>
+      </div>
+      <h4>Forma de Pagamento</h4>
+      <div class="payment-options">
+        <label><input type="radio" name="payment" value="PIX" checked> PIX (Pagamento via QR Code ou copia e cola)</label>
+      </div>
+      <button class="checkout-btn" id="checkout-btn"><i class="fab fa-whatsapp"></i> FINALIZAR PEDIDO</button>
+    </div>
+  </div>
+  
+  <!-- SOBRE NÓS MODAL -->
+  <div class="about-overlay" id="about-overlay" onclick="closeAbout()"></div>
+  <div class="about-modal" id="about-modal">
+    <div class="about-header">
+      <h2><i class="fas fa-info-circle"></i> Sobre a RAFAKITS25</h2>
+      <button class="close-about" onclick="closeAbout()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="about-content">
+      <h3>🏆 Nossa História</h3>
+      <p>Fundada em 2020, a RAFAKITS25 nasceu da paixão pelo futebol e pela moda streetwear. Começamos vendendo camisas de time personalizadas e hoje somos referência em estilo urbano. Estamos localizados em Cuzinha, MG.</p>
+      <h3>🎯 Missão</h3>
+      <p>Oferecer roupas de qualidade com design autêntico, unindo o amor pelo esporte e a atitude das ruas.</p>
+      <div class="about-highlight"><p><i class="fas fa-quote-left"></i> Mais de 10.000 clientes atendidos, 25.000 pedidos entregues e uma avaliação média de 4.9 estrelas.</p></div>
+      <h3>🌟 Valores</h3>
+      <div class="values-grid">
+        <div class="value-item"><div class="value-icon"><i class="fas fa-flask"></i></div><h4>Qualidade</h4><p>Tecidos premium e acabamento impecável</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-hand-holding-heart"></i></div><h4>Transparência</h4><p>Informações claras e honestas</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-rocket"></i></div><h4>Inovação</h4><p>Sempre atualizados com as tendências</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-users"></i></div><h4>Comunidade</h4><p>Valorizamos cada cliente</p></div>
+      </div>
+      <p style="margin-top: var(--space-xl); font-weight: 600; color: var(--primary); text-align: center;">RAFAKITS25 – Sua referência no estilo está aqui!</p>
+    </div>
+  </div>
+  
+  <!-- MODAL DE DETALHES DO PRODUTO -->
+  <div class="product-modal-overlay" id="product-modal-overlay" onclick="closeProductModal(event)">
+    <div class="product-modal" id="product-modal" onclick="event.stopPropagation()">
+      <div class="product-modal-header">
+        <h2 id="modal-product-name">Detalhes do Produto</h2>
+        <button class="close-product-modal" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="product-modal-content">
+        <div class="product-modal-gallery">
+          <img src="" alt="Produto" class="main-image" id="modal-main-image">
+          <div class="thumbnail-list" id="modal-thumbnails"></div>
+          <div class="product-details-under-gallery" id="product-details-under-gallery"></div>
+        </div>
+        <div class="product-modal-info">
+          <span class="product-modal-category" id="modal-category"></span>
+          <h3 class="product-modal-title" id="modal-title"></h3>
+          <div class="product-modal-rating">
+            <div class="stars" id="modal-stars"></div>
+            <span class="rating-count" id="modal-rating-count"></span>
+          </div>
+          <div id="product-sizes-container" class="product-sizes" style="margin: 1rem 0;"></div>
+          <div class="product-modal-price">
+            <span class="product-modal-current" id="modal-current-price"></span>
+            <span class="product-modal-original" id="modal-original-price"></span>
+          </div>
+          <div class="product-modal-installment" id="modal-installment"></div>
+          <div class="product-modal-stock" id="modal-stock"></div>
+          <div class="product-modal-tabs">
+            <button class="tab-btn active" onclick="switchTab('descricao', event)">Descrição</button>
+            <button class="tab-btn" onclick="switchTab('avaliacoes', event)">Avaliações</button>
+            <button class="tab-btn" onclick="switchTab('info', event)">Informações</button>
+          </div>
+          <div class="tab-content" id="modal-tab-content"></div>
+          <div class="product-modal-actions">
+            <button class="btn-primary" id="modal-add-to-cart" onclick="addToCartFromModal()"><i class="fas fa-shopping-cart"></i> ADICIONAR</button>
+            <button class="btn-continue" onclick="closeProductModal()"><i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO</button>
+            <button class="btn-secondary" onclick="addToWishlistFromModal()"><i class="far fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="notification" id="notification"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

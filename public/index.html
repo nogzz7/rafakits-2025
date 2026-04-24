@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Rafakits25 • Streetwear e Camisas de Time</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Swiper CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+  
+  <!-- HEADER SUPERIOR -->
+  <div class="header-top">
+    <div class="container">
+      <div class="header-top-content">
+        <div class="discount-tag">
+          <i class="fas fa-bolt"></i>
+          FRETE GRÁTIS PARA TODO BRASIL
+        </div>
+        <div class="header-top-right">
+          <span>Até 6x sem juros no cartão</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- HEADER PRINCIPAL -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">
+          <div class="logo-image-container">
+            <img src="https://i.ibb.co/gLdXY0zV/1.png" alt="Rafakits25 Logo" class="logo-image"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/60/000000/FFFFFF?text=RK25';">
+          </div>
+          <div class="logo-text">
+            <div class="logo-main">RAFA<span>KITS25</span></div>
+            <div class="logo-sub">Streetwear e Camisas de Time</div>
+          </div>
+        </a>
+        
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-box" placeholder="Buscar camisetas, bermudas..." id="search-input">
+        </div>
+        
+        <div class="header-actions">
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-user"></i></div>
+            <span>Minha Conta</span>
+          </a>
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-heart"></i></div>
+            <span>Favoritos</span>
+          </a>
+          <button class="header-action" id="cart-btn">
+            <div class="action-icon">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count">0</span>
+            </div>
+            <span>Carrinho</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- BANNER PRINCIPAL COM CÍRCULOS ANIMADOS (HERO CARROSSEL) -->
+  <section class="hero-carousel">
+    <div class="circles">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-list">
+        <div class="hero-item active">
+          <div class="hero-img"><img src="https://i.ibb.co/wfTKsgw/brasil1.png" alt="Camisa Brasil"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Brasil</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/CKKvVFrS/brasil.png" alt="Camisa Brasil 2"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Brasil 2</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/mChbtGyv/cruzeiro.png" alt="Camisa Cruzeiro"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Cruzeiro</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/Xhp4dMJ/atletico.png" alt="Camisa Atlético"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Atlético</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+      </div>
+      <div class="hero-arrows">
+        <button class="hero-arrow" id="hero-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="hero-arrow" id="hero-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="hero-indicators">
+        <div class="hero-numbers">01</div>
+        <div class="hero-dots">
+          <span class="hero-dot active"></span>
+          <span class="hero-dot"></span>
+          <span class="hero-dot"></span>
+          <span class="hero-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- MINI BANNERS -->
+  <section class="mini-banners section-sm">
+    <div class="container">
+      <div class="mini-banners-grid">
+        <div class="mini-banner">
+          <h3>ENTREGA RÁPIDA</h3>
+          <p>Enviamos para todo Brasil!</p>
+          <a href="#" class="banner-button">Saiba Mais</a>
+        </div>
+        <div class="mini-banner">
+          <h3>PARCELE EM ATÉ 6X</h3>
+          <p>No cartão de crédito, sem juros.</p>
+          <a href="#" class="banner-button">Ver Condições</a>
+        </div>
+        <div class="mini-banner">
+          <h3>SOBRE A RAFÁKITS25</h3>
+          <p>Streetwear que define sua atitude. Cuzinha - MG.</p>
+          <a href="javascript:void(0)" onclick="openAbout()" class="banner-button">Conheça</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- SEÇÃO FLASH SALE - PRODUTOS EM PROMOÇÃO -->
+  <section class="flash-sale-section">
+    <div class="container">
+      <div class="flash-sale-header">
+        <div class="flash-sale-title-group">
+          <div class="flash-sale-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="flash-sale-text">
+            <span class="flash-sale-badge">LIMITED TIME</span>
+            <h2 class="flash-sale-title">OFERTAS <span>IMPERDÍVEIS</span></h2>
+            <p class="flash-sale-subtitle">Até 40% OFF em camisas selecionadas</p>
+          </div>
+        </div>
+        <div class="flash-sale-timer" id="flash-sale-timer">
+          <div class="timer-block">
+            <span class="timer-number" id="timer-days">00</span>
+            <span class="timer-label">Dias</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-hours">00</span>
+            <span class="timer-label">Horas</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-minutes">00</span>
+            <span class="timer-label">Min</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-seconds">00</span>
+            <span class="timer-label">Seg</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flash-sale-products" id="flash-sale-products"></div>
+      
+      <div class="flash-sale-footer">
+        <a href="#" class="btn-view-all" onclick="filterProducts('all')">
+          Ver todas as ofertas <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CATEGORIAS -->
+  <section class="categories-section section" id="categories">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Categorias <span>RAFAKITS25</span></h2>
+        <a href="#" class="section-link">Ver todas as categorias <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="categories-grid" id="categories-grid"></div>
+    </div>
+  </section>
+  
+  <!-- PRODUTOS -->
+  <section class="products-section section" id="products">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Produtos <span>em Destaque</span></h2>
+        <div class="products-filter">
+          <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+          <button class="filter-btn" onclick="filterProducts('times')">Camisas de Time</button>
+          <button class="filter-btn" onclick="filterProducts('oversized')">Oversized</button>
+          <button class="filter-btn" onclick="filterProducts('shorts')">Shorts/Calças</button>
+        </div>
+      </div>
+      <div class="products-grid" id="products-grid"></div>
+    </div>
+  </section>
+  
+  <!-- BENEFÍCIOS -->
+  <section class="benefits-section section">
+    <div class="container">
+      <h2 class="section-title text-center mb-6">Por que escolher a <span>RAFAKITS25</span>?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-tshirt"></i></div>
+          <h3 class="benefit-title">Qualidade Premium</h3>
+          <p class="text-gray">Tecidos selecionados e acabamento impecável em todas as peças.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+          <h3 class="benefit-title">Entrega Rápida</h3>
+          <p class="text-gray">Entregamos para todo Brasil com prazo de 3 a 10 dias úteis.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-credit-card"></i></div>
+          <h3 class="benefit-title">Pagamento Seguro</h3>
+          <p class="text-gray">Site 100% seguro com criptografia e diversas formas de pagamento.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+          <h3 class

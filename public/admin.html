@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rafakits25 - Painel Administrativo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #D4AF37;
+      --primary-dark: #B8960F;
+      --primary-light: #FFF8E1;
+      --secondary: #0f172a;
+      --secondary-light: #1e293b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --white: #ffffff;
+      --black: #000000;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --gray-900: #0f172a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+    }
+
+    /* Tela de Login */
+    #login-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-header .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .login-header .logo span {
+      color: var(--secondary);
+    }
+
+    .login-header h2 {
+      color: var(--gray-800);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-header p {
+      color: var(--gray-500);
+      font-size: 0.95rem;
+    }
+
+    .login-form .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .login-form label {
+      display: block;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-form input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .login-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary);
+      color: var(--secondary);
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      transition: background 0.2s;
+    }
+
+    .login-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .login-error {
+      color: var(--danger);
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    /* Painel Admin */
+    #admin-panel {
+      display: none;
+    }
+
+    .admin-container {
+      display: flex;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: var(--secondary);
+      color: var(--white);
+      height: 100vh;
+      position: fixed;
+      padding: 2rem 1.5rem;
+    }
+
+    .sidebar .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 2.5rem;
+    }
+
+    .sidebar .logo span {
+      color: var(--primary);
+    }
+
+    .nav-menu {
+      list-style: none;
+    }
+
+    .nav-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      color: var(--gray-300);
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: var(--secondary-light);
+      color: var(--white);
+    }
+
+    .nav-link.active {
+      border-left: 4px solid var(--primary);
+    }
+
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 2rem;
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--white);
+      padding: 1.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .page-title i {
+      color: var(--primary);
+      margin-right: 0.75rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-email {
+      color: var(--gray-600);
+    }
+
+    .logout-btn {
+      background: none;
+      border: 2px solid var(--gray-200);
+      color: var(--gray-600);
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 1.8rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .stat-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--gray-500);
+    }
+
+    .filters {
+      background: var(--white);
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .filter-group label {
+      display: block;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-family: inherit;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--secondary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: var(--white);
+      border: 2px solid var(--gray-200);
+      color: var(--gray-600);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    .btn-danger:hover {
+      background: #b91c1c;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: var(--white);
+    }
+
+    .btn-warning {
+      background: var(--warning);
+      color: var(--white);
+    }
+
+    .btn-small {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    .table-container {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: var(--gray-50);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--gray-600);
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    tr:hover {
+      background: var(--gray-50);
+    }
+
+    .product-cell {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .product-image {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: var(--gray-200);
+    }
+
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-warning {
+      background: #fed7aa;
+      color: #92400e;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .stock-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stock-input {
+      width: 70px;
+      padding: 0.4rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .stock-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 2px solid var(--gray-200);
+      background: var(--white);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .stock-btn:hover {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: 24px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray-400);
+    }
+
+    .close-btn:hover {
+      color: var(--primary);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 2rem;
+      margin: 1rem 0;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--gray-200);
+    }
+
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .order-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-card h4 {
+      margin: 0.5rem 0;
+    }
+
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+    }
+
+    .loading.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid var(--gray-200);
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--white);
+      border-left: 4px solid var(--success);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transform: translateX(400px);
+      transition: transform 0.3s;
+      z-index: 2000;
+    }
+
+    .notification.active {
+      transform: translateX(0);
+    }
+
+    .notification.error {
+      border-left-color: var(--danger);
+    }
+
+    .notification i {
+      font-size: 1.5rem;
+    }
+
+    .info-box {
+      background: var(--gray-100);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      color: var(--gray-600);
+    }
+  </style>
+</head>
+<body>
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="logo">RAFA<span>KITS25</span></div>
+        <h2>Acesso Restrito</h2>
+        <p>Área exclusiva para equipe</p>
+      </div>
+      <div class="login-form">
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="admin-password" placeholder="Digite a senha">
+        </div>
+        <button class="login-btn" onclick="checkPassword()">
+          <i class="fas fa-sign-in-alt"></i> Entrar
+        </button>
+        <div id="login-error" class="login-error"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAINEL ADMIN -->
+  <div id="admin-panel">
+    <div class="admin-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">RAFA<span>KITS25</span></div>
+        <ul class="nav-menu">
+          <li class="nav-item">
+            <a href="#" class="nav-link active" data-section="dashboard">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-section="products">
+              <i class="fas fa-boxes"></i> Produtos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-section="orders">
+              <i class="fas fa-shopping-cart"></i> Pedidos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-section="categories">
+              <i class="fas fa-tags"></i> Categorias
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-section="reports">
+              <i class="fas fa-chart-bar"></i> Relatórios
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-section="coupons">
+              <i class="fas fa-ticket-alt"></i> Cupons
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" data-section="customers">
+              <i class="fas fa-users"></i> Clientes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link" onclick="window.open('index.html','_blank')">
+              <i class="fas fa-store"></i> Ver Loja
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="main-header">
+          <h1 class="page-title" id="current-section-title"><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+          <div class="user-info">
+            <span class="user-email" id="user-email">Admin</span>
+            <button class="logout-btn" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+          </div>
+        </div>
+
+        <!-- Seções -->
+        <!-- Dashboard -->
+        <div id="dashboard-section" class="page-section">
+          <div class="stats-grid" id="stats-grid"></div>
+          <div class="table-container">
+            <div style="padding:1.5rem; border-bottom:2px solid var(--gray-200);">
+              <h2><i class="fas fa-history"></i> Últimos Pedidos</h2>
+            </div>
+            <div id="recent-orders-table"></div>
+          </div>
+        </div>
+
+        <!-- Produtos -->
+        <div id="products-section" class="page-section" style="display:none;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:2rem;">
+            <h2>Gerenciar Produtos</h2>
+            <button class="btn btn-primary" onclick="openProductModal()">
+              <i class="fas fa-plus"></i> Nova Peça
+            </button>
+          </div>
+          <div class="filters">
+            <div class="filter-group">
+              <label>Buscar</label>
+              <input type="text" id="search-product" placeholder="Nome, descrição..." oninput="filterProducts()">
+            </div>
+            <div class="filter-group">
+              <label>Categoria</label>
+              <select id="filter-category" onchange="filterProducts()"></select>
+            </div>
+            <div class="filter-group">
+              <label>Status</label>
+              <select id="filter-status" onchange="filterProducts()">
+                <option value="">Todos</option>
+                <option value="active">Ativos</option>
+                <option value="inactive">Inativos</option>
+                <option value="lowstock">Estoque baixo</option>
+              </select>
+            </div>
+            <button class="btn btn-outline" onclick="resetProductFilters()">
+              <i class="fas fa-undo"></i> Limpar
+            </button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Categoria</th>
+                  <th>Preço Custo</th>
+                  <th>Preço Venda</th>
+                  <th>Estoque</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="products-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pedidos -->
+        <div id="orders-section" class="page-section" style="display:none;">
+          <h2 style="margin-bottom:2rem;">Pedidos</h2>
+          <div class="filters">
+            <div class="filter-group">
+              <label>Data</label>
+              <input type="date" id="filter-order-date" onchange="filterOrders()">
+            </div>
+            <div class="filter-group">
+              <label>Status</label>
+              <select id="filter-order-status" onchange="filterOrders()">
+                <option value="">Todos</option>
+                <option value="pending">Pendente</option>
+                <option value="processing">Processando</option>
+                <option value="completed">Concluído</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+            </div>
+          </div>
+          <div class="orders-grid" id="orders-grid"></div>
+        </div>
+
+        <!-- Categorias -->
+        <div id="categories-section" class="page-section" style="display:none;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:2rem;">
+            <h2>Categorias</h2>
+            <button class="btn btn-primary" onclick="openCategoryModal()">
+              <i class="fas fa-plus"></i> Nova Categoria
+            </button>
+          </div>
+          <div class="stats-grid" id="categories-grid"></div>
+        </div>
+
+        <!-- Relatórios -->
+        <div id="reports-section" class="page-section" style="display:none;">
+          <h2 style="margin-bottom:2rem;">Relatórios</h2>
+          <div style="display:flex; gap:1rem; margin-bottom:2rem;">
+            <button class="btn btn-primary" onclick="generateReport('daily')">
+              <i class="fas fa-calendar-day"></i> Hoje
+            </button>
+            <button class="btn btn-primary" onclick="generateReport('weekly')">
+              <i class="fas fa-calendar-week"></i> Esta Semana
+            </button>
+            <button class="btn btn-primary" onclick="generateReport('monthly')">
+              <i class="fas fa-calendar-alt"></i> Este Mês
+            </button>
+          </div>
+          <div class="stats-grid" id="reports-grid"></div>
+          <div class="table-container" style="margin-top:2rem;">
+            <div style="padding:1.5rem;">
+              <h3>Produtos Mais Vendidos</h3>
+            </div>
+            <div id="top-products-table"></div>
+          </div>
+        </div>
+
+        <!-- Cupons -->
+        <div id="coupons-section" class="page-section" style="display:none;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:2rem;">
+            <h2>Gerenciar Cupons</h2>
+            <button class="btn btn-primary" onclick="openCouponModal()">
+              <i class="fas fa-plus"></i> Novo Cupom
+            </button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Tipo</th>
+                  <th>Valor</th>
+                  <th>Descrição</th>
+                  <th>Usos</th>
+                  <th>Expira</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="coupons-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Clientes -->
+        <div id="customers-section" class="page-section" style="display:none;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:2rem;">
+            <h2>Clientes</h2>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Telefone</th>
+                  <th>Email</th>
+                  <th>Total Pedidos</th>
+                  <th>Total Gasto</th>
+                  <th>Último Pedido</th>
+                  <th>VIP</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="customers-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Produto -->
+  <div class="modal-overlay" id="product-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="product-modal-title">Nova Peça</h2>
+        <button class="close-btn" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="product-form" onsubmit="saveProduct(event)">
+        <input type="hidden" id="product-id">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nome *</label>
+            <input type="text" id="product-name" required>
+          </div>
+          <div class="form-group">
+            <label>Categoria *</label>
+            <select id="product-category" required></select>
+          </div>
+          <div class="form-group">
+            <label>Preço de Custo (R$) *</label>
+            <input type="number" id="product-cost-price" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Preço de Venda (R$) *</label>
+            <input type="number" id="product-price" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Preço Original (R$) (opcional)</label>
+            <input type="number" id="product-original-price" step="0.01" min="0">
+          </div>
+          <div class="form-group">
+            <label>Estoque *</label>
+            <input type="number" id="product-inventory" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Marca</label>
+            <input type="text" id="product-brand" placeholder="Ex: Nike, Adidas, Própria">
+          </div>
+          <div class="form-group">
+            <label>Tamanhos (separados por vírgula)</label>
+            <input type="text" id="product-sizes" placeholder="P, M, G, GG">
+          </div>
+          <div class="form-group">
+            <label>Material</label>
+            <input type="text" id="product-material" placeholder="Ex: 100% Algodão">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <textarea id="product-description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Imagem Principal (URL)</label>
+          <input type="text" id="product-image-1" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Imagem 2 (URL) (opcional)</label>
+          <input type="text" id="product-image-2" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Imagem 3 (URL) (opcional)</label>
+          <input type="text" id="product-image-3" placeholder="https://...">
+        </div>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="product-on-sale"> Em promoção?
+          </label>
+          <label>
+            <input type="checkbox" id="product-available" checked> Disponível
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeProductModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Categoria -->
+  <div class="modal-overlay" id="category-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Nova Categoria</h2>
+        <button class="close-btn" onclick="closeCategoryModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <form onsubmit="saveCategory(event)">
+        <input type="hidden" id="category-id">
+        <div class="form-group">
+          <label>Nome *</label>
+          <input type="text" id="category-name" required>
+        </div>
+        <div class="form-group">
+          <label>Slug *</label>
+          <input type="text" id="category-slug" required>
+        </div>
+        <div class="form-group">
+          <label>Ícone (classe Font Awesome)</label>
+          <input type="text" id="category-icon" placeholder="fa-solid fa-tshirt">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeCategoryModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Cupom -->
+  <div class="modal-overlay" id="coupon-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="coupon-modal-title">Novo Cupom</h2>
+        <button class="close-btn" onclick="closeCouponModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="coupon-form" onsubmit="saveCoupon(event)">
+        <input type="hidden" id="coupon-id">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Código *</label>
+            <input type="text" id="coupon-code" required>
+          </div>
+          <div class="form-group">
+            <label>Tipo *</label>
+            <select id="coupon-type" required>
+              <option value="percentage">Percentual (%)</option>
+              <option value="fixed">Valor Fixo (R$)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Valor *</label>
+            <input type="number" id="coupon-value" step="0.01" min="0" required>
+          </div>
+          <div class="form-group">
+            <label>Descrição</label>
+            <input type="text" id="coupon-description">
+          </div>
+          <div class="form-group">
+            <label>Valor mínimo do pedido (R$)</label>
+            <input type="number" id="coupon-min-order" step="0.01" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Usos máximos (deixe em branco para ilimitado)</label>
+            <input type="number" id="coupon-max-uses" min="1">
+          </div>
+          <div class="form-group">
+            <label>Data de expiração</label>
+            <input type="date" id="coupon-expires">
+          </div>
+        </div>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="coupon-active" checked> Ativo
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeCouponModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Cliente -->
+  <div class="modal-overlay" id="customer-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Detalhes do Cliente</h2>
+        <button class="close-btn" onclick="closeCustomerModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="customer-form" onsubmit="saveCustomerVIP(event)">
+        <input type="hidden" id="customer-id">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="customer-name" readonly>
+        </div>
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="text" id="customer-phone" readonly>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="customer-email" readonly>
+        </div>
+        <div class="form-group">
+          <label>Total Pedidos</label>
+          <input type="number" id="customer-total-orders" readonly>
+        </div>
+        <div class="form-group">
+          <label>Total Gasto</label>
+          <input type="text" id="customer-total-spent" readonly>
+        </div>
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="customer-is-vip"> Cliente VIP (premiado)
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeCustomerModal()">Fechar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading e Notificação -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+  <div class="notification" id="notification"></div>
+
+  <script>
+    // ========== CONFIGURAÇÃO ==========
+    const API_BASE = '/.netlify/functions';
+    const ADMIN_PASSWORD = 'rafakits25'; // senha alterada
+
+    // ========== UTILITÁRIO ==========
+    function toNumber(value) {
+      const num = parseFloat(value);
+      return isNaN(num) ? 0 : num;
+    }
+
+    // ========== ESTADO GLOBAL ==========
+    let products = [];
+    let orders = [];
+    let categories = [];
+    let coupons = [];
+    let customers = [];
+    let filteredProducts = [];
+    let filteredOrders = [];
+
+    // ========== FUNÇÕES DE LOGIN ==========
+    function checkPassword() {
+      const pwd = document.getElementById('admin-password').value;
+      if (pwd === ADMIN_PASSWORD) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        document.getElementById('user-email').textContent = 'Admin';
+        initAdmin();
+      } else {
+        document.getElementById('login-error').innerText = 'Senha incorreta';
+      }
+    }
+
+    function logout() {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('admin-panel').style.display = 'none';
+    }
+
+    // ========== FUNÇÕES AUXILIARES ==========
+    function showLoading() {
+      document.getElementById('loading').classList.add('active');
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.remove('active');
+    }
+
+    function showNotification(msg, type = 'success') {
+      const notif = document.getElementById('notification');
+      notif.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
+      notif.className = `notification ${type} active`;
+      setTimeout(() => notif.classList.remove('active'), 3000);
+    }
+
+    // ========== FUNÇÕES DE API ==========
+    async function api(method, endpoint, data = null, id = null) {
+      let url = `${API_BASE}/${endpoint}`;
+      if (id) url += `?id=${id}`;
+      const options = {
+        method,
+        headers: { 'Content-Type': 'application/json' }
+      };
+      if (data) options.body = JSON.stringify(data);
+      const res = await fetch(url, options);
+      if (!res.ok) throw new Error(await res.text());
+      return res.json();
+    }
+
+    // ========== PRODUTOS (CORRIGIDOS) ==========
+    async function loadProducts() {
+      products = await api('GET', 'products');
+      // Garante compatibilidade entre image_url e image_1/2/3
+      products = products.map(p => ({
+        ...p,
+        image_1: p.image_1 || p.image_url || '',
+        image_2: p.image_2 || '',
+        image_3: p.image_3 || '',
+        image_url: p.image_url || p.image_1 || ''
+      }));
+      filteredProducts = [...products];
+      renderProductsTable();
+    }
+
+    function renderProductsTable() {
+      const tbody = document.getElementById('products-table');
+      if (filteredProducts.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Nenhuma peça encontrada</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filteredProducts.map(p => {
+        const cat = categories.find(c => c.slug === p.collection) || { name: p.collection };
+        const mainImage = p.image_1 || p.image_url || 'https://placehold.co/50x50?text=RK25';
+        return `<tr>
+          <td>
+            <div class="product-cell">
+              <img src="${mainImage}" class="product-image" onerror="this.src='https://placehold.co/50x50?text=RK25'">
+              <div>
+                <strong>${p.name}</strong><br>
+                <small>${p.metadata?.marca || ''}</small>
+              </div>
+            </div>
+          </td>
+          <td>${cat.name || p.collection}</td>
+          <td>R$ ${toNumber(p.cost_price).toFixed(2)}</td>
+          <td>R$ ${toNumber(p.price).toFixed(2)}</td>
+          <td>
+            <div class="stock-control">
+              <input type="number" class="stock-input" value="${p.inventory}" data-id="${p.id}" onchange="updateStock('${p.id}', this.value)">
+              <button class="stock-btn" onclick="updateStock('${p.id}', ${p.inventory + 1})">+</button>
+              <button class="stock-btn" onclick="updateStock('${p.id}', ${p.inventory - 1})">-</button>
+            </div>
+          </td>
+          <td>
+            ${p.inventory === 0 ? '<span class="badge badge-danger">Esgotado</span>' : p.inventory < 10 ? '<span class="badge badge-warning">Baixo</span>' : '<span class="badge badge-success">OK</span>'}
+            ${!p.available ? '<br><span class="badge">Inativo</span>' : ''}
+          </td>
+          <td>
+            <button class="btn btn-outline btn-small" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-small" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </td>`;
+      }).join('');
+    }
+
+    async function saveProduct(e) {
+      e.preventDefault();
+      showLoading();
+      const sizesRaw = document.getElementById('product-sizes').value;
+      const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : ['P','M','G','GG'];
+      const id = document.getElementById('product-id').value;
+      let existingProduct = id ? products.find(p => p.id == id) : null;
+
+      let image1 = document.getElementById('product-image-1').value;
+      let image2 = document.getElementById('product-image-2').value;
+      let image3 = document.getElementById('product-image-3').value;
+
+      // Em edição, se os campos de imagem estiverem vazios, mantém os originais (evita apagar)
+      if (existingProduct) {
+        if (!image1) image1 = existingProduct.image_1 || existingProduct.image_url || '';
+        if (!image2) image2 = existingProduct.image_2 || '';
+        if (!image3) image3 = existingProduct.image_3 || '';
+      }
+
+      const data = {
+        name: document.getElementById('product-name').value,
+        description: document.getElementById('product-description').value,
+        cost_price: parseFloat(document.getElementById('product-cost-price').value) || 0,
+        price: parseFloat(document.getElementById('product-price').value),
+        original_price: parseFloat(document.getElementById('product-original-price').value) || null,
+        inventory: parseInt(document.getElementById('product-inventory').value),
+        collection: document.getElementById('product-category').value,
+        image_1: image1 || null,
+        image_2: image2 || null,
+        image_3: image3 || null,
+        image_url: image1 || null,  // compatibilidade
+        on_sale: document.getElementById('product-on-sale').checked,
+        available: document.getElementById('product-available').checked,
+        metadata: {
+          marca: document.getElementById('product-brand').value,
+          sizes: sizes,
+          material: document.getElementById('product-material').value
+        }
+      };
+
+      try {
+        if (id) {
+          await api('PUT', 'products', data, id);
+        } else {
+          await api('POST', 'products', data);
+        }
+        await loadProducts();
+        closeProductModal();
+        showNotification('Peça salva com sucesso!', 'success');
+      } catch (err) {
+        showNotification('Erro ao salvar: ' + err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Tem certeza que deseja excluir esta peça?')) return;
+      showLoading();
+      try {
+        await api('DELETE', 'products', null, id);
+        await loadProducts();
+        showNotification('Peça excluída', 'success');
+      } catch (err) {
+        showNotification('Erro ao excluir', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function updateStock(id, newStock) {
+      newStock = parseInt(newStock);
+      if (isNaN(newStock) || newStock < 0) return;
+      const product = products.find(p => p.id == id);
+      if (!product) return;
+
+      // Prepara objeto completo, garantindo que campos de imagem não sejam perdidos
+      const updatedProduct = {
+        ...product,
+        inventory: newStock,
+        available: newStock > 0,
+        image_1: product.image_1 || product.image_url || '',
+        image_2: product.image_2 || '',
+        image_3: product.image_3 || '',
+        image_url: product.image_url || product.image_1 || ''
+      };
+
+      showLoading();
+      try {
+        await api('PUT', 'products', updatedProduct, id);
+        await loadProducts();
+        showNotification('Estoque atualizado', 'success');
+      } catch (err) {
+        showNotification('Erro ao atualizar estoque: ' + err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function filterProducts() {
+      const search = document.getElementById('search-product').value.toLowerCase();
+      const cat = document.getElementById('filter-category').value;
+      const status = document.getElementById('filter-status').value;
+      filteredProducts = products.filter(p => {
+        if (search && !p.name.toLowerCase().includes(search) && !(p.description || '').toLowerCase().includes(search)) return false;
+        if (cat && p.collection !== cat) return false;
+        if (status === 'active' && !p.available) return false;
+        if (status === 'inactive' && p.available) return false;
+        if (status === 'lowstock' && (p.inventory >= 10 || p.inventory === 0)) return false;
+        return true;
+      });
+      renderProductsTable();
+    }
+
+    function resetProductFilters() {
+      document.getElementById('search-product').value = '';
+      document.getElementById('filter-category').value = '';
+      document.getElementById('filter-status').value = '';
+      filteredProducts = [...products];
+      renderProductsTable();
+    }
+
+    function editProduct(id) {
+      const product = products.find(p => p.id == id);
+      if (product) openProductModal(product);
+    }
+
+    function openProductModal(product = null) {
+      document.getElementById('product-modal').classList.add('active');
+      if (product) {
+        document.getElementById('product-modal-title').innerText = 'Editar Peça';
+        document.getElementById('product-id').value = product.id;
+        document.getElementById('product-name').value = product.name;
+        document.getElementById('product-description').value = product.description || '';
+        document.getElementById('product-cost-price').value = product.cost_price || '';
+        document.getElementById('product-price').value = product.price;
+        document.getElementById('product-original-price').value = product.original_price || '';
+        document.getElementById('product-inventory').value = product.inventory;
+        document.getElementById('product-category').value = product.collection || '';
+        document.getElementById('product-brand').value = product.metadata?.marca || '';
+        const sizes = product.metadata?.sizes ? product.metadata.sizes.join(', ') : 'P, M, G, GG';
+        document.getElementById('product-sizes').value = sizes;
+        document.getElementById('product-material').value = product.metadata?.material || '';
+        // Preenche campos de imagem: prioriza image_1 e fallback para image_url
+        document.getElementById('product-image-1').value = product.image_1 || product.image_url || '';
+        document.getElementById('product-image-2').value = product.image_2 || '';
+        document.getElementById('product-image-3').value = product.image_3 || '';
+        document.getElementById('product-on-sale').checked = product.on_sale || false;
+        document.getElementById('product-available').checked = product.available !== false;
+      } else {
+        document.getElementById('product-modal-title').innerText = 'Nova Peça';
+        document.getElementById('product-form').reset();
+        document.getElementById('product-id').value = '';
+        document.getElementById('product-available').checked = true;
+        document.getElementById('product-sizes').value = 'P, M, G, GG';
+        document.getElementById('product-image-1').value = '';
+        document.getElementById('product-image-2').value = '';
+        document.getElementById('product-image-3').value = '';
+      }
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-modal').classList.remove('active');
+    }
+
+    // ========== CATEGORIAS ==========
+    async function loadCategories() {
+      try {
+        categories = await api('GET', 'categories');
+      } catch (err) {
+        console.error('Erro ao carregar categorias:', err);
+        categories = [];
+      }
+      renderCategoryOptions();
+      renderCategoriesGrid();
+
+      if (categories.length === 0) {
+        showNotification('Nenhuma categoria encontrada. Crie uma para poder cadastrar produtos.', 'warning');
+      }
+    }
+
+    function renderCategoryOptions() {
+      const select = document.getElementById('product-category');
+      const filterSelect = document.getElementById('filter-category');
+      let options = '<option value="">Selecione...</option>';
+      let filterOptions = '<option value="">Todas</option>';
+      
+      categories.forEach(c => {
+        options += `<option value="${c.slug}">${c.name}</option>`;
+        filterOptions += `<option value="${c.slug}">${c.name}</option>`;
+      });
+      
+      select.innerHTML = options;
+      filterSelect.innerHTML = filterOptions;
+    }
+
+    function renderCategoriesGrid() {
+      const grid = document.getElementById('categories-grid');
+      if (categories.length === 0) {
+        grid.innerHTML = `
+          <div class="info-box" style="grid-column:1/-1;">
+            <i class="fas fa-info-circle"></i> Nenhuma categoria cadastrada.
+            <button class="btn btn-primary btn-small" onclick="openCategoryModal()" style="margin-left:1rem;">
+              <i class="fas fa-plus"></i> Criar primeira categoria
+            </button>
+          </div>
+        `;
+        return;
+      }
+      grid.innerHTML = categories.map(c => `
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas ${c.icon || 'fa-tag'}"></i></div>
+          <div class="stat-number">${c.name}</div>
+          <div style="margin-top:1rem;">
+            <button class="btn btn-outline btn-small" onclick="editCategory('${c.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-small" onclick="deleteCategory('${c.id}')"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function saveCategory(e) {
+      e.preventDefault();
+      const data = {
+        name: document.getElementById('category-name').value,
+        slug: document.getElementById('category-slug').value,
+        icon: document.getElementById('category-icon').value
+      };
+      const id = document.getElementById('category-id').value;
+      showLoading();
+      try {
+        if (id) {
+          await api('PUT', 'categories', data, id);
+        } else {
+          await api('POST', 'categories', data);
+        }
+        await loadCategories();
+        closeCategoryModal();
+        showNotification('Categoria salva com sucesso!', 'success');
+      } catch (err) {
+        showNotification('Erro ao salvar categoria: ' + err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function deleteCategory(id) {
+      if (!confirm('Excluir categoria? Isso pode afetar produtos vinculados.')) return;
+      showLoading();
+      try {
+        await api('DELETE', 'categories', null, id);
+        await loadCategories();
+        showNotification('Categoria excluída', 'success');
+      } catch (err) {
+        showNotification('Erro ao excluir', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function editCategory(id) {
+      const category = categories.find(c => c.id == id);
+      if (category) {
+        document.getElementById('category-id').value = category.id;
+        document.getElementById('category-name').value = category.name;
+        document.getElementById('category-slug').value = category.slug;
+        document.getElementById('category-icon').value = category.icon || '';
+        document.getElementById('category-modal').classList.add('active');
+      }
+    }
+
+    function openCategoryModal() {
+      document.getElementById('category-id').value = '';
+      document.getElementById('category-name').value = '';
+      document.getElementById('category-slug').value = '';
+      document.getElementById('category-icon').value = '';
+      document.getElementById('category-modal').classList.add('active');
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('category-modal').classList.remove('active');
+    }
+
+    // ========== PEDIDOS ==========
+    async function loadOrders() {
+      orders = await api('GET', 'orders');
+      filteredOrders = [...orders];
+      renderOrdersGrid();
+      renderRecentOrders();
+    }
+
+    function renderOrdersGrid() {
+      const grid = document.getElementById('orders-grid');
+      if (filteredOrders.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Nenhum pedido encontrado</p>';
+        return;
+      }
+      grid.innerHTML = filteredOrders.map(o => {
+        const items = Array.isArray(o.items) ? o.items : [];
+        const total = toNumber(o.total_amount);
+        return `
+          <div class="order-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="badge ${getStatusClass(o.status)}">${o.status}</span>
+              <small>${new Date(o.created_at).toLocaleDateString()}</small>
+            </div>
+            <h4>${o.customer_name}</h4>
+            <p><i class="fas fa-phone"></i> ${o.customer_phone || ''}</p>
+            <hr style="margin:1rem 0;">
+            <div style="max-height:150px; overflow-y:auto;">
+              ${items.map(item => {
+                const itemPrice = toNumber(item.price);
+                return `<div style="display:flex; justify-content:space-between;"><span>${item.name} x${item.quantity}</span><span>R$ ${(itemPrice * item.quantity).toFixed(2)}</span></div>`;
+              }).join('')}
+            </div>
+            <div style="font-weight:bold; text-align:right; margin-top:1rem;">Total: R$ ${total.toFixed(2)}</div>
+            <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+              <button class="btn btn-success btn-small" onclick="updateOrderStatus('${o.id}', 'completed')"><i class="fas fa-check"></i></button>
+              <button class="btn btn-warning btn-small" onclick="updateOrderStatus('${o.id}', 'processing')"><i class="fas fa-cog"></i></button>
+              <button class="btn btn-danger btn-small" onclick="updateOrderStatus('${o.id}', 'cancelled')"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getStatusClass(status) {
+      const map = {
+        pending: 'badge-warning',
+        processing: 'badge-info',
+        completed: 'badge-success',
+        cancelled: 'badge-danger'
+      };
+      return map[status] || '';
+    }
+
+    async function updateOrderStatus(id, newStatus) {
+      showLoading();
+      try {
+        await api('PUT', 'orders', { status: newStatus }, id);
+        await loadOrders();
+        showNotification('Status atualizado', 'success');
+      } catch (err) {
+        showNotification('Erro ao atualizar status', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function filterOrders() {
+      const date = document.getElementById('filter-order-date').value;
+      const status = document.getElementById('filter-order-status').value;
+      filteredOrders = orders.filter(o => {
+        const orderDate = new Date(o.created_at).toISOString().split('T')[0];
+        if (date && orderDate !== date) return false;
+        if (status && o.status !== status) return false;
+        return true;
+      });
+      renderOrdersGrid();
+    }
+
+    function renderRecentOrders() {
+      const recent = orders.slice(0, 5);
+      const container = document.getElementById('recent-orders-table');
+      if (recent.length === 0) {
+        container.innerHTML = '<p style="padding:2rem; text-align:center;">Nenhum pedido recente</p>';
+        return;
+      }
+      let html = '</table><thead><tr><th>Cliente</th><th>Data</th><th>Total</th><th>Status</th></tr></thead><tbody>';
+      recent.forEach(o => {
+        const total = toNumber(o.total_amount);
+        html += `<tr><td>${o.customer_name}</td><td>${new Date(o.created_at).toLocaleDateString()}</td><td>R$ ${total.toFixed(2)}</td><td><span class="badge ${getStatusClass(o.status)}">${o.status}</span></td></tr>`;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    // ========== CUPONS ==========
+    async function loadCoupons() {
+      coupons = await api('GET', 'coupons');
+      renderCouponsTable();
+    }
+
+    function renderCouponsTable() {
+      const tbody = document.getElementById('coupons-table');
+      if (coupons.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Nenhum cupom cadastrado</td></tr>';
+        return;
+      }
+      tbody.innerHTML = coupons.map(c => `
+        <tr>
+          <td><strong>${c.code}</strong></td>
+          <td>${c.discount_type === 'percentage' ? 'Percentual' : 'Fixo'}</td>
+          <td>${c.discount_type === 'percentage' ? c.discount_value + '%' : 'R$ ' + c.discount_value.toFixed(2)}</td>
+          <td>${c.description || '-'}</td>
+          <td>${c.used_count} / ${c.max_uses || '∞'}</td>
+          <td>${c.expires_at ? new Date(c.expires_at).toLocaleDateString() : '-'}</td>
+          <td>${c.active ? '<span class="badge badge-success">Ativo</span>' : '<span class="badge badge-danger">Inativo</span>'}</td>
+          <td>
+            <button class="btn btn-outline btn-small" onclick="editCoupon('${c.id}')"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-danger btn-small" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function saveCoupon(e) {
+      e.preventDefault();
+      const data = {
+        code: document.getElementById('coupon-code').value,
+        discount_type: document.getElementById('coupon-type').value,
+        discount_value: parseFloat(document.getElementById('coupon-value').value),
+        description: document.getElementById('coupon-description').value,
+        min_order_value: parseFloat(document.getElementById('coupon-min-order').value) || 0,
+        max_uses: document.getElementById('coupon-max-uses').value ? parseInt(document.getElementById('coupon-max-uses').value) : null,
+        expires_at: document.getElementById('coupon-expires').value || null,
+        active: document.getElementById('coupon-active').checked
+      };
+      const id = document.getElementById('coupon-id').value;
+      showLoading();
+      try {
+        if (id) {
+          await api('PUT', 'coupons', data, id);
+        } else {
+          await api('POST', 'coupons', data);
+        }
+        await loadCoupons();
+        closeCouponModal();
+        showNotification('Cupom salvo com sucesso!', 'success');
+      } catch (err) {
+        showNotification('Erro: ' + err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function deleteCoupon(id) {
+      if (!confirm('Excluir cupom?')) return;
+      showLoading();
+      try {
+        await api('DELETE', 'coupons', null, id);
+        await loadCoupons();
+        showNotification('Cupom excluído', 'success');
+      } catch (err) {
+        showNotification('Erro ao excluir', 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function editCoupon(id) {
+      const coupon = coupons.find(c => c.id == id);
+      if (coupon) {
+        document.getElementById('coupon-id').value = coupon.id;
+        document.getElementById('coupon-code').value = coupon.code;
+        document.getElementById('coupon-type').value = coupon.discount_type;
+        document.getElementById('coupon-value').value = coupon.discount_value;
+        document.getElementById('coupon-description').value = coupon.description || '';
+        document.getElementById('coupon-min-order').value = coupon.min_order_value || 0;
+        document.getElementById('coupon-max-uses').value = coupon.max_uses || '';
+        document.getElementById('coupon-expires').value = coupon.expires_at ? coupon.expires_at.split('T')[0] : '';
+        document.getElementById('coupon-active').checked = coupon.active;
+        document.getElementById('coupon-modal-title').innerText = 'Editar Cupom';
+        document.getElementById('coupon-modal').classList.add('active');
+      }
+    }
+
+    function openCouponModal() {
+      document.getElementById('coupon-form').reset();
+      document.getElementById('coupon-id').value = '';
+      document.getElementById('coupon-active').checked = true;
+      document.getElementById('coupon-modal-title').innerText = 'Novo Cupom';
+      document.getElementById('coupon-modal').classList.add('active');
+    }
+
+    function closeCouponModal() {
+      document.getElementById('coupon-modal').classList.remove('active');
+    }
+
+    // ========== CLIENTES ==========
+    async function loadCustomers() {
+      const custMap = new Map();
+      orders.forEach(o => {
+        const phone = o.customer_phone;
+        if (!phone) return;
+        if (!custMap.has(phone)) {
+          custMap.set(phone, {
+            name: o.customer_name,
+            phone: phone,
+            email: o.customer_email || '',
+            total_orders: 0,
+            total_spent: 0,
+            last_order_date: o.created_at,
+            is_vip: false
+          });
+        }
+        const c = custMap.get(phone);
+        c.total_orders++;
+        c.total_spent += toNumber(o.total_amount);
+        if (new Date(o.created_at) > new Date(c.last_order_date)) {
+          c.last_order_date = o.created_at;
+        }
+      });
+      customers = Array.from(custMap.values());
+      customers.sort((a, b) => b.total_spent - a.total_spent);
+      renderCustomersTable();
+    }
+
+    function renderCustomersTable() {
+      const tbody = document.getElementById('customers-table');
+      if (customers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Nenhum cliente encontrado</td></tr>';
+        return;
+      }
+      tbody.innerHTML = customers.map(c => `
+        <tr>
+          <td>${c.name}</td>
+          <td>${c.phone}</td>
+          <td>${c.email || '-'}</td>
+          <td>${c.total_orders}</td>
+          <td>R$ ${c.total_spent.toFixed(2)}</td>
+          <td>${c.last_order_date ? new Date(c.last_order_date).toLocaleDateString() : '-'}</td>
+          <td>${c.is_vip ? '<span class="badge badge-success">VIP</span>' : '-'}</td>
+          <td><button class="btn btn-outline btn-small" onclick="openCustomerModal('${c.phone}')"><i class="fas fa-eye"></i> Detalhes</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function openCustomerModal(phone) {
+      const customer = customers.find(c => c.phone === phone);
+      if (!customer) return;
+      document.getElementById('customer-id').value = phone;
+      document.getElementById('customer-name').value = customer.name;
+      document.getElementById('customer-phone').value = customer.phone;
+      document.getElementById('customer-email').value = customer.email || '';
+      document.getElementById('customer-total-orders').value = customer.total_orders;
+      document.getElementById('customer-total-spent').value = 'R$ ' + customer.total_spent.toFixed(2);
+      document.getElementById('customer-is-vip').checked = customer.is_vip || false;
+      document.getElementById('customer-modal').classList.add('active');
+    }
+
+    function closeCustomerModal() {
+      document.getElementById('customer-modal').classList.remove('active');
+    }
+
+    async function saveCustomerVIP(e) {
+      e.preventDefault();
+      const phone = document.getElementById('customer-id').value;
+      const isVip = document.getElementById('customer-is-vip').checked;
+      const customer = customers.find(c => c.phone === phone);
+      if (customer) {
+        customer.is_vip = isVip;
+      }
+      showNotification('Cliente VIP atualizado (simulado)', 'success');
+      closeCustomerModal();
+      renderCustomersTable();
+    }
+
+    // ========== ESTATÍSTICAS E RELATÓRIOS ==========
+    async function loadStats() {
+      const totalProducts = products.length;
+      const activeProducts = products.filter(p => p.available).length;
+      const lowStock = products.filter(p => p.inventory > 0 && p.inventory < 10).length;
+      const totalOrders = orders.length;
+      const pendingOrders = orders.filter(o => o.status === 'pending').length;
+      const totalRevenue = orders.reduce((sum, o) => sum + toNumber(o.total_amount), 0);
+
+      document.getElementById('stats-grid').innerHTML = `
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-tshirt"></i></div><div class="stat-number">${totalProducts}</div><div class="stat-label">Peças</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-number">${activeProducts}</div><div class="stat-label">Ativas</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-number">${lowStock}</div><div class="stat-label">Estoque baixo</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div class="stat-number">${totalOrders}</div><div class="stat-label">Pedidos</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-number">${pendingOrders}</div><div class="stat-label">Pendentes</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div><div class="stat-number">R$ ${totalRevenue.toFixed(2)}</div><div class="stat-label">Faturamento</div></div>
+      `;
+    }
+
+    async function generateReport(period) {
+      let startDate = new Date();
+      if (period === 'daily') startDate.setHours(0, 0, 0, 0);
+      if (period === 'weekly') startDate.setDate(startDate.getDate() - 7);
+      if (period === 'monthly') startDate.setMonth(startDate.getMonth() - 1);
+
+      const periodOrders = orders.filter(o => new Date(o.created_at) >= startDate);
+      const totalOrders = periodOrders.length;
+      const totalRevenue = periodOrders.reduce((sum, o) => sum + toNumber(o.total_amount), 0);
+      const avgTicket = totalOrders ? totalRevenue / totalOrders : 0;
+
+      const productMap = new Map(products.map(p => [p.name, toNumber(p.cost_price)]));
+      let totalCost = 0;
+      periodOrders.forEach(o => {
+        (o.items || []).forEach(item => {
+          const cost = productMap.get(item.name) || 0;
+          totalCost += cost * item.quantity;
+        });
+      });
+      const totalProfit = totalRevenue - totalCost;
+
+      document.getElementById('reports-grid').innerHTML = `
+        <div class="stat-card"><div class="stat-number">${totalOrders}</div><div class="stat-label">Pedidos</div></div>
+        <div class="stat-card"><div class="stat-number">R$ ${totalRevenue.toFixed(2)}</div><div class="stat-label">Faturamento</div></div>
+        <div class="stat-card"><div class="stat-number">R$ ${avgTicket.toFixed(2)}</div><div class="stat-label">Ticket médio</div></div>
+        <div class="stat-card"><div class="stat-number">R$ ${totalCost.toFixed(2)}</div><div class="stat-label">Custo total</div></div>
+        <div class="stat-card"><div class="stat-number">R$ ${totalProfit.toFixed(2)}</div><div class="stat-label">Lucro total</div></div>
+      `;
+
+      const sales = {};
+      periodOrders.forEach(o => {
+        (o.items || []).forEach(item => {
+          if (!sales[item.name]) sales[item.name] = 0;
+          sales[item.name] += item.quantity;
+        });
+      });
+      const top = Object.entries(sales).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      let html = '<table><thead><tr><th>Produto</th><th>Quantidade</th></tr></thead><tbody>';
+      top.forEach(([name, qty]) => html += `<tr><td>${name}</td><td>${qty}</td></tr>`);
+      html += '</tbody></table>';
+      document.getElementById('top-products-table').innerHTML = html;
+    }
+
+    // ========== NAVEGAÇÃO ENTRE SEÇÕES ==========
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.dataset.section;
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        document.querySelectorAll('.page-section').forEach(s => s.style.display = 'none');
+        document.getElementById(section + '-section').style.display = 'block';
+        document.getElementById('current-section-title').innerHTML = `<i class="fas ${getIconForSection(section)}"></i> ${capitalize(section)}`;
+      });
+    });
+
+    function getIconForSection(section) {
+      const icons = {
+        dashboard: 'fa-tachometer-alt',
+        products: 'fa-boxes',
+        orders: 'fa-shopping-cart',
+        categories: 'fa-tags',
+        reports: 'fa-chart-bar',
+        coupons: 'fa-ticket-alt',
+        customers: 'fa-users'
+      };
+      return icons[section] || 'fa-circle';
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    // ========== INICIALIZAÇÃO ==========
+    async function initAdmin() {
+      showLoading();
+      try {
+        await loadCategories();
+        await loadProducts();
+        await loadOrders();
+        await loadCoupons();
+        await loadCustomers();
+        await loadStats();
+        showNotification('Painel carregado com sucesso!', 'success');
+      } catch (err) {
+        console.error(err);
+        showNotification('Erro ao carregar dados: ' + err.message, 'error');
+      } finally {
+        hideLoading();
+      }
+    }
+  </script>
+</body>
+</html>
