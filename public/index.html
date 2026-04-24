@@ -4,196 +4,482 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Rafakits25 • Streetwear e Camisas de Time</title>
+  
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --primary: #D4AF37;
-      --primary-dark: #B8960F;
-      --secondary: #0f172a;
-      --white: #ffffff;
-      --gray-100: #f1f5f9;
-      --gray-200: #e2e8f0;
-      --gray-600: #475569;
-      --gray-900: #0f172a;
-      --success: #10b981;
-      --danger: #ef4444;
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--gray-100); }
-    .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
-    /* HEADER */
-    .header-top { background: var(--secondary); color: white; padding: 8px 0; font-size: 14px; text-align: center; }
-    .main-header { background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-    .header-content { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; flex-wrap: wrap; gap: 15px; }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-image { width: 50px; height: 50px; object-fit: contain; }
-    .logo-main { font-size: 1.8rem; font-weight: 800; color: var(--secondary); }
-    .logo-main span { color: var(--primary); }
-    .search-container { flex: 1; max-width: 400px; position: relative; }
-    .search-box { width: 100%; padding: 12px 20px; border: 2px solid var(--gray-200); border-radius: 30px; font-size: 14px; }
-    .header-actions { display: flex; gap: 20px; }
-    .header-action { background: none; border: none; display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 500; }
-    .cart-count { background: var(--primary); border-radius: 50%; padding: 2px 6px; font-size: 12px; margin-left: 5px; }
-    /* HERO */
-    .hero-carousel { position: relative; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 40px 0; color: white; }
-    .hero-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-    .hero-list { display: flex; overflow: hidden; width: 100%; position: relative; }
-    .hero-item { display: none; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; width: 100%; }
-    .hero-item.active { display: grid; }
-    .hero-img img { max-width: 100%; border-radius: 20px; }
-    .hero-name { font-size: 3rem; font-weight: 800; margin: 10px 0; }
-    .hero-price { font-size: 2rem; color: var(--primary); }
-    .hero-arrows { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); }
-    .hero-arrow { background: rgba(0,0,0,0.5); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-    /* SEÇÕES */
-    .section { padding: 60px 0; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; }
-    .section-title { font-size: 2rem; }
-    .section-title span { color: var(--primary); }
-    .products-grid, .flash-sale-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
-    .product-card { background: white; border-radius: 16px; overflow: hidden; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
-    .product-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; cursor: pointer; }
-    .product-info { padding: 20px; }
-    .product-title { font-size: 1.1rem; font-weight: 600; margin: 10px 0; cursor: pointer; }
-    .product-price { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
-    .current-price { font-size: 1.4rem; font-weight: 700; color: var(--secondary); }
-    .original-price { text-decoration: line-through; color: var(--gray-600); font-size: 0.9rem; }
-    .btn-buy { background: var(--primary); color: var(--secondary); border: none; padding: 12px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    .badge { position: absolute; top: 10px; left: 10px; background: var(--danger); color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; }
-    /* MODAL TAMANHO */
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
-    .modal-overlay.active { display: flex; }
-    .modal { background: white; border-radius: 20px; padding: 24px; max-width: 400px; width: 90%; }
-    .size-options { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
-    .size-btn { padding: 10px 20px; border: 2px solid var(--gray-200); background: white; border-radius: 8px; cursor: pointer; }
-    .size-btn.selected { background: var(--primary); border-color: var(--primary); }
-    /* CARRINHO */
-    .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: white; z-index: 1100; transition: 0.3s; padding: 20px; overflow-y: auto; }
-    .cart-sidebar.active { right: 0; }
-    .cart-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1050; }
-    .cart-overlay.active { display: block; }
-    .notification { position: fixed; bottom: 20px; right: 20px; background: white; border-left: 4px solid var(--success); padding: 12px 20px; border-radius: 8px; transform: translateX(400px); transition: 0.3s; z-index: 1200; }
-    .notification.active { transform: translateX(0); }
-    @media (max-width: 768px) { .hero-item.active { grid-template-columns: 1fr; text-align: center; } .cart-sidebar { width: 100%; right: -100%; } }
-  </style>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="loading" id="loading" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:2000; align-items:center; justify-content:center;"><div class="spinner"></div></div>
-  <div class="header-top"><div class="container"><div class="discount-tag"><i class="fas fa-bolt"></i> FRETE GRÁTIS PARA TODO BRASIL</div></div></div>
-  <header class="main-header"><div class="container"><div class="header-content"><a href="#" class="logo"><div class="logo-image-container"><img src="https://i.ibb.co/gLdXY0zV/1.png" alt="Logo" class="logo-image"></div><div class="logo-text"><div class="logo-main">RAFA<span>KITS25</span></div><div class="logo-sub">Streetwear e Camisas de Time</div></div></a><div class="search-container"><i class="fas fa-search search-icon"></i><input type="text" class="search-box" placeholder="Buscar..." id="search-input"></div><div class="header-actions"><button class="header-action" id="cart-btn"><div class="action-icon"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></div><span>Carrinho</span></button></div></div></div></header>
-
-  <!-- Hero Carrossel -->
-  <section class="hero-carousel"><div class="hero-container"><div class="hero-list"><div class="hero-item active"><div class="hero-img"><img src="https://i.ibb.co/wfTKsgw/brasil1.png" alt="Brasil"></div><div class="hero-content"><p class="hero-tag">Novo lançamento</p><p class="hero-name">Camisa Brasil</p><p class="hero-price">R$ 31,99</p></div></div><div class="hero-item"><div class="hero-img"><img src="https://i.ibb.co/CKKvVFrS/brasil.png" alt="Brasil"></div><div class="hero-content"><p class="hero-tag">Novo lançamento</p><p class="hero-name">Camisa Brasil 2</p><p class="hero-price">R$ 31,99</p></div></div></div><div class="hero-arrows"><button class="hero-arrow" id="hero-prev"><i class="fas fa-chevron-left"></i></button><button class="hero-arrow" id="hero-next"><i class="fas fa-chevron-right"></i></button></div></div></section>
-
-  <!-- Produtos -->
-  <section class="section" id="products"><div class="container"><div class="section-header"><h2 class="section-title">Produtos <span>em Destaque</span></h2><div class="products-filter"><button class="filter-btn active" data-filter="all">Todos</button><button class="filter-btn" data-filter="times">Camisas de Time</button><button class="filter-btn" data-filter="oversized">Oversized</button></div></div><div class="products-grid" id="products-grid"></div></div></section>
-
-  <!-- Modal Tamanho -->
-  <div class="modal-overlay" id="sizeModalOverlay"><div class="modal"><h3>Selecione o tamanho</h3><p id="sizeProductName"></p><div class="size-options" id="sizeOptionsContainer"></div><button id="confirmAddToCartBtn" class="btn-buy">Adicionar ao carrinho</button><button onclick="closeSizeModal()" style="margin-top:10px;">Cancelar</button></div></div>
-
-  <!-- Carrinho -->
-  <div class="cart-overlay" id="cart-overlay"></div><div class="cart-sidebar" id="cart-sidebar"><div class="cart-header"><h2>Carrinho</h2><button onclick="closeCart()">X</button></div><div id="cart-items"></div><div class="coupon-section"><input type="text" id="coupon-input" placeholder="Cupom"><button onclick="applyCoupon()">Aplicar</button><div id="coupon-message"></div></div><div id="cart-summary"></div><div class="checkout-form"><input type="text" id="customer-name" placeholder="Nome"><input type="text" id="customer-phone" placeholder="WhatsApp"><input type="text" id="customer-cep" placeholder="CEP"><input type="text" id="customer-address" placeholder="Endereço"><input type="text" id="customer-number" placeholder="Número"><input type="text" id="customer-neighborhood" placeholder="Bairro"><input type="text" id="customer-city" placeholder="Cidade"><input type="text" id="customer-state" placeholder="UF"><button id="checkout-btn">Finalizar Pedido</button></div></div>
-
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+  
+  <!-- HEADER SUPERIOR -->
+  <div class="header-top">
+    <div class="container">
+      <div class="header-top-content">
+        <div class="discount-tag">
+          <i class="fas fa-bolt"></i>
+          FRETE GRÁTIS PARA TODO BRASIL
+        </div>
+        <div class="header-top-right">
+          <span>Até 6x sem juros no cartão</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- HEADER PRINCIPAL -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo">
+          <div class="logo-image-container">
+            <img src="https://i.ibb.co/gLdXY0zV/1.png" alt="Rafakits25 Logo" class="logo-image"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/60/000000/FFFFFF?text=RK25';">
+          </div>
+          <div class="logo-text">
+            <div class="logo-main">RAFA<span>KITS25</span></div>
+            <div class="logo-sub">Streetwear e Camisas de Time</div>
+          </div>
+        </a>
+        
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-box" placeholder="Buscar camisetas, bermudas..." id="search-input">
+        </div>
+        
+        <div class="header-actions">
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-user"></i></div>
+            <span>Minha Conta</span>
+          </a>
+          <a href="#" class="header-action">
+            <div class="action-icon"><i class="far fa-heart"></i></div>
+            <span>Favoritos</span>
+          </a>
+          <button class="header-action" id="cart-btn">
+            <div class="action-icon">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count">0</span>
+            </div>
+            <span>Carrinho</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- BANNER PRINCIPAL COM CÍRCULOS ANIMADOS (HERO CARROSSEL) -->
+  <section class="hero-carousel">
+    <div class="circles">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+    <div class="hero-container">
+      <div class="hero-list">
+        <div class="hero-item active">
+          <div class="hero-img"><img src="https://i.ibb.co/wfTKsgw/brasil1.png" alt="Camisa Brasil"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Brasil</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/CKKvVFrS/brasil.png" alt="Camisa Brasil 2"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Brasil 2</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/mChbtGyv/cruzeiro.png" alt="Camisa Cruzeiro"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Cruzeiro</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+        <div class="hero-item">
+          <div class="hero-img"><img src="https://i.ibb.co/Xhp4dMJ/atletico.png" alt="Camisa Atlético"></div>
+          <div class="hero-content">
+            <p class="hero-tag">Novo lançamento</p>
+            <p class="hero-name">Camisa Atlético</p>
+            <p class="hero-price">R$ 31,99</p>
+          </div>
+        </div>
+      </div>
+      <div class="hero-arrows">
+        <button class="hero-arrow" id="hero-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="hero-arrow" id="hero-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="hero-indicators">
+        <div class="hero-numbers">01</div>
+        <div class="hero-dots">
+          <span class="hero-dot active"></span>
+          <span class="hero-dot"></span>
+          <span class="hero-dot"></span>
+          <span class="hero-dot"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- MINI BANNERS -->
+  <section class="mini-banners section-sm">
+    <div class="container">
+      <div class="mini-banners-grid">
+        <div class="mini-banner">
+          <h3>ENTREGA RÁPIDA</h3>
+          <p>Enviamos para todo Brasil!</p>
+          <a href="#" class="banner-button">Saiba Mais</a>
+        </div>
+        <div class="mini-banner">
+          <h3>PARCELE EM ATÉ 6X</h3>
+          <p>No cartão de crédito, sem juros.</p>
+          <a href="#" class="banner-button">Ver Condições</a>
+        </div>
+        <div class="mini-banner">
+          <h3>SOBRE A RAFÁKITS25</h3>
+          <p>Streetwear que define sua atitude. Cuzinha - MG.</p>
+          <a href="javascript:void(0)" onclick="openAbout()" class="banner-button">Conheça</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- SEÇÃO FLASH SALE - PRODUTOS EM PROMOÇÃO -->
+  <section class="flash-sale-section">
+    <div class="container">
+      <div class="flash-sale-header">
+        <div class="flash-sale-title-group">
+          <div class="flash-sale-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="flash-sale-text">
+            <span class="flash-sale-badge">LIMITED TIME</span>
+            <h2 class="flash-sale-title">OFERTAS <span>IMPERDÍVEIS</span></h2>
+            <p class="flash-sale-subtitle">Até 40% OFF em camisas selecionadas</p>
+          </div>
+        </div>
+        <div class="flash-sale-timer" id="flash-sale-timer">
+          <div class="timer-block">
+            <span class="timer-number" id="timer-days">00</span>
+            <span class="timer-label">Dias</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-hours">00</span>
+            <span class="timer-label">Horas</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-minutes">00</span>
+            <span class="timer-label">Min</span>
+          </div>
+          <div class="timer-separator">:</div>
+          <div class="timer-block">
+            <span class="timer-number" id="timer-seconds">00</span>
+            <span class="timer-label">Seg</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="flash-sale-products" id="flash-sale-products"></div>
+      
+      <div class="flash-sale-footer">
+        <a href="#" class="btn-view-all" onclick="filterProducts('all')">
+          Ver todas as ofertas <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- CATEGORIAS -->
+  <section class="categories-section section" id="categories">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Categorias <span>RAFAKITS25</span></h2>
+        <a href="#" class="section-link">Ver todas as categorias <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="categories-grid" id="categories-grid"></div>
+    </div>
+  </section>
+  
+  <!-- PRODUTOS -->
+  <section class="products-section section" id="products">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Produtos <span>em Destaque</span></h2>
+        <div class="products-filter">
+          <button class="filter-btn active" data-filter="all">Todos</button>
+          <button class="filter-btn" data-filter="times">Camisas de Time</button>
+          <button class="filter-btn" data-filter="oversized">Oversized</button>
+          <button class="filter-btn" data-filter="shorts">Shorts/Calças</button>
+        </div>
+      </div>
+      <div class="products-grid" id="products-grid"></div>
+    </div>
+  </section>
+  
+  <!-- BENEFÍCIOS -->
+  <section class="benefits-section section">
+    <div class="container">
+      <h2 class="section-title text-center mb-6">Por que escolher a <span>RAFAKITS25</span>?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-tshirt"></i></div>
+          <h3 class="benefit-title">Qualidade Premium</h3>
+          <p class="text-gray">Tecidos selecionados e acabamento impecável em todas as peças.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+          <h3 class="benefit-title">Entrega Rápida</h3>
+          <p class="text-gray">Entregamos para todo Brasil com prazo de 3 a 10 dias úteis.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-credit-card"></i></div>
+          <h3 class="benefit-title">Pagamento Seguro</h3>
+          <p class="text-gray">Site 100% seguro com criptografia e diversas formas de pagamento.</p>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-icon"><i class="fas fa-headset"></i></div>
+          <h3 class="benefit-title">Suporte 24/7</h3>
+          <p class="text-gray">Equipe especializada pronta para atender suas dúvidas a qualquer hora.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2 class="newsletter-title">Fique por dentro das novidades</h2>
+        <p class="newsletter-subtitle">Receba ofertas exclusivas, lançamentos e dicas de estilo direto no seu e-mail.</p>
+        <form class="newsletter-form" id="newsletter-form">
+          <input type="email" class="newsletter-input" placeholder="Seu melhor e-mail" required>
+          <button type="submit" class="btn-newsletter"><i class="fas fa-paper-plane"></i> Inscrever-se</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <div class="footer-logo">RAFA<span>KITS25</span></div>
+          <p class="footer-description">Streetwear que define sua atitude. Camisas de time e moda casual com qualidade e estilo.</p>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Links Rápidos</h3>
+          <ul class="footer-links">
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Início</a></li>
+            <li><a href="#products"><i class="fas fa-chevron-right"></i> Produtos</a></li>
+            <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categorias</a></li>
+            <li><a href="#products"><i class="fas fa-chevron-right"></i> Ofertas</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Categorias</h3>
+          <ul class="footer-links">
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Camisas de Time</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Oversized</a></li>
+            <li><a href="#"><i class="fas fa-chevron-right"></i> Shorts e Calças</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contato</h3>
+          <ul class="contact-info">
+            <li><i class="fas fa-phone"></i><span>(33) 99995-3164<br><small>Seg a Sex: 9h às 18h</small></span></li>
+            <li><i class="fas fa-envelope"></i><span>rafakits25@gmail.com</span></li>
+            <li><i class="fas fa-map-marker-alt"></i><span>Cuzinha - MG</span></li>
+          </ul>
+          <div class="payment-methods">
+            <h4>Formas de Pagamento</h4>
+            <div class="payment-icons">
+              <div class="payment-icon">PIX</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 RAFAKITS25 - Streetwear e Camisas de Time. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- CARRINHO SIDEBAR -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2><i class="fas fa-shopping-cart"></i> Seu Carrinho</h2>
+      <button class="close-cart" onclick="closeCart()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-summary" id="cart-summary"></div>
+    <div class="coupon-section">
+      <div class="coupon-form">
+        <input type="text" class="coupon-input" id="coupon-input" placeholder="Digite seu cupom">
+        <button class="btn-coupon" onclick="applyCoupon()">Aplicar</button>
+      </div>
+      <div id="coupon-message" style="margin-top: 8px; font-size: 13px;"></div>
+    </div>
+    <div class="checkout-form">
+      <div class="form-group">
+        <label for="customer-name">Nome Completo *</label>
+        <input type="text" id="customer-name" placeholder="Digite seu nome" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-phone">WhatsApp *</label>
+        <input type="tel" id="customer-phone" placeholder="(11) 99999-9999" required>
+      </div>
+      <h4>Endereço de Entrega</h4>
+      <div class="form-group">
+        <label for="customer-cep">CEP *</label>
+        <input type="text" id="customer-cep" placeholder="00000-000" required>
+      </div>
+      <div class="form-group">
+        <label for="customer-address">Endereço *</label>
+        <input type="text" id="customer-address" placeholder="Rua, Av, etc" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customer-number">Número *</label>
+          <input type="text" id="customer-number" placeholder="Nº" required>
+        </div>
+        <div class="form-group">
+          <label for="customer-complement">Complemento</label>
+          <input type="text" id="customer-complement" placeholder="Apto, bloco">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="customer-neighborhood">Bairro *</label>
+        <input type="text" id="customer-neighborhood" placeholder="Bairro" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="customer-city">Cidade *</label>
+          <input type="text" id="customer-city" placeholder="Cidade" required>
+        </div>
+        <div class="form-group">
+          <label for="customer-state">UF *</label>
+          <input type="text" id="customer-state" placeholder="UF" maxlength="2" required>
+        </div>
+      </div>
+      <h4>Forma de Pagamento</h4>
+      <div class="payment-options">
+        <label><input type="radio" name="payment" value="PIX" checked> PIX (Pagamento via QR Code ou copia e cola)</label>
+      </div>
+      <button class="checkout-btn" id="checkout-btn"><i class="fab fa-whatsapp"></i> FINALIZAR PEDIDO</button>
+    </div>
+  </div>
+  
+  <!-- MODAL SOBRE NÓS -->
+  <div class="about-overlay" id="about-overlay" onclick="closeAbout()"></div>
+  <div class="about-modal" id="about-modal">
+    <div class="about-header">
+      <h2><i class="fas fa-info-circle"></i> Sobre a RAFAKITS25</h2>
+      <button class="close-about" onclick="closeAbout()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="about-content">
+      <h3>🏆 Nossa História</h3>
+      <p>Fundada em 2020, a RAFAKITS25 nasceu da paixão pelo futebol e pela moda streetwear. Começamos vendendo camisas de time personalizadas e hoje somos referência em estilo urbano. Estamos localizados em Cuzinha, MG.</p>
+      <h3>🎯 Missão</h3>
+      <p>Oferecer roupas de qualidade com design autêntico, unindo o amor pelo esporte e a atitude das ruas.</p>
+      <div class="about-highlight"><p><i class="fas fa-quote-left"></i> Mais de 10.000 clientes atendidos, 25.000 pedidos entregues e uma avaliação média de 4.9 estrelas.</p></div>
+      <h3>🌟 Valores</h3>
+      <div class="values-grid">
+        <div class="value-item"><div class="value-icon"><i class="fas fa-flask"></i></div><h4>Qualidade</h4><p>Tecidos premium e acabamento impecável</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-hand-holding-heart"></i></div><h4>Transparência</h4><p>Informações claras e honestas</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-rocket"></i></div><h4>Inovação</h4><p>Sempre atualizados com as tendências</p></div>
+        <div class="value-item"><div class="value-icon"><i class="fas fa-users"></i></div><h4>Comunidade</h4><p>Valorizamos cada cliente</p></div>
+      </div>
+      <p style="margin-top: 30px; font-weight: 600; color: var(--primary); text-align: center;">RAFAKITS25 – Sua referência no estilo está aqui!</p>
+    </div>
+  </div>
+  
+  <!-- MODAL DE SELEÇÃO DE TAMANHO -->
+  <div class="modal-overlay" id="sizeModalOverlay">
+    <div class="size-modal">
+      <div class="size-modal-header">
+        <h3>Selecione o tamanho</h3>
+        <button class="close-size-modal" onclick="closeSizeModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="size-modal-body">
+        <p id="sizeProductName"></p>
+        <div class="size-options" id="sizeOptionsContainer"></div>
+        <div class="size-modal-actions">
+          <button id="confirmAddToCartBtn" class="btn-primary">Adicionar ao carrinho</button>
+          <button class="btn-outline" onclick="closeSizeModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- MODAL DE DETALHES DO PRODUTO -->
+  <div class="product-modal-overlay" id="product-modal-overlay" onclick="closeProductModal(event)">
+    <div class="product-modal" id="product-modal" onclick="event.stopPropagation()">
+      <div class="product-modal-header">
+        <h2 id="modal-product-name">Detalhes do Produto</h2>
+        <button class="close-product-modal" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="product-modal-content">
+        <div class="product-modal-gallery">
+          <img src="" alt="Produto" class="main-image" id="modal-main-image">
+          <div class="thumbnail-list" id="modal-thumbnails"></div>
+          <div class="product-details-under-gallery" id="product-details-under-gallery"></div>
+        </div>
+        <div class="product-modal-info">
+          <span class="product-modal-category" id="modal-category"></span>
+          <h3 class="product-modal-title" id="modal-title"></h3>
+          <div class="product-modal-rating">
+            <div class="stars" id="modal-stars"></div>
+            <span class="rating-count" id="modal-rating-count"></span>
+          </div>
+          <div id="product-sizes-container" class="product-sizes" style="margin: 1rem 0;"></div>
+          <div class="product-modal-price">
+            <span class="product-modal-current" id="modal-current-price"></span>
+            <span class="product-modal-original" id="modal-original-price"></span>
+          </div>
+          <div class="product-modal-installment" id="modal-installment"></div>
+          <div class="product-modal-stock" id="modal-stock"></div>
+          <div class="product-modal-tabs">
+            <button class="tab-btn active" onclick="switchTab('descricao', event)">Descrição</button>
+            <button class="tab-btn" onclick="switchTab('avaliacoes', event)">Avaliações</button>
+            <button class="tab-btn" onclick="switchTab('info', event)">Informações</button>
+          </div>
+          <div class="tab-content" id="modal-tab-content"></div>
+          <div class="product-modal-actions">
+            <button class="btn-primary" id="modal-add-to-cart" onclick="addToCartFromModal()"><i class="fas fa-shopping-cart"></i> ADICIONAR</button>
+            <button class="btn-continue" onclick="closeProductModal()"><i class="fas fa-arrow-left"></i> CONTINUAR COMPRANDO</button>
+            <button class="btn-secondary" onclick="addToWishlistFromModal()"><i class="far fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- NOTIFICAÇÃO -->
   <div class="notification" id="notification"></div>
-
-  <script>
-    const API_BASE = '/.netlify/functions';
-    let products = [], categories = [], cart = JSON.parse(localStorage.getItem('rafakits25-cart')) || [];
-    let currentFilter = 'all', activeCoupon = null, pendingProduct = null;
-
-    function toNumber(v) { return parseFloat(v) || 0; }
-    function showNotification(msg, type = 'success') { const n = document.getElementById('notification'); n.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`; n.classList.add('active'); setTimeout(() => n.classList.remove('active'), 3000); }
-    function showLoading() { document.getElementById('loading').style.display = 'flex'; }
-    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
-
-    async function api(endpoint, id = null) {
-      let url = `${API_BASE}/${endpoint}`;
-      if (id) url += `?id=${id}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(await res.text());
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        return data.map(item => ({ ...item, price: toNumber(item.price), original_price: item.original_price ? toNumber(item.original_price) : null, inventory: parseInt(item.inventory) || 0 }));
-      }
-      return data;
-    }
-
-    async function loadProductsAndCategories() {
-      showLoading();
-      try {
-        const productsData = await api('products');
-        products = productsData;
-        // Tenta carregar categorias, mas não impede os produtos
-        try {
-          categories = await api('categories');
-        } catch(e) {
-          console.warn('Erro ao carregar categorias:', e);
-          categories = [];
-        }
-        renderProducts();
-        updateCartPricesFromDB();
-        loadFlashSaleProducts();
-      } catch (err) {
-        console.error('Erro ao carregar produtos:', err);
-        showNotification('Erro ao carregar produtos. Tente recarregar.', 'error');
-      } finally {
-        hideLoading();
-      }
-    }
-
-    function renderProducts() {
-      const container = document.getElementById('products-grid');
-      let filtered = currentFilter === 'all' ? products : products.filter(p => p.collection === currentFilter);
-      if (filtered.length === 0) { container.innerHTML = '<div style="text-align:center; padding:3rem;">Nenhum produto encontrado</div>'; return; }
-      container.innerHTML = filtered.map(product => {
-        const isOnSale = product.on_sale && product.original_price > product.price;
-        const isOutOfStock = product.inventory <= 0;
-        const salePercentage = isOnSale ? Math.round((1 - product.price / product.original_price) * 100) : 0;
-        const imgUrl = product.image_1 || product.image_url || 'https://placehold.co/300x300?text=RK25';
-        return `<div class="product-card"><div class="product-badges">${isOnSale ? `<div class="badge">${salePercentage}% OFF</div>` : ''}</div>${isOutOfStock ? '<div class="out-of-stock-label">ESGOTADO</div>' : ''}<img src="${imgUrl}" class="product-image" onclick="openSizeModalForProduct(${product.id})" onerror="this.src='https://placehold.co/300x300'"><div class="product-info"><h3 class="product-title">${product.name}</h3><div class="product-price">${isOnSale ? `<span class="original-price">R$ ${product.original_price.toFixed(2)}</span>` : ''}<span class="current-price">R$ ${product.price.toFixed(2)}</span></div>${!isOutOfStock ? `<button class="btn-buy" data-id="${product.id}">COMPRAR</button>` : ''}</div></div>`;
-      }).join('');
-      document.querySelectorAll('.btn-buy').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); const id = parseInt(btn.dataset.id); const p = products.find(p => p.id === id); if(p && p.inventory > 0) openSizeModal(p); }));
-    }
-
-    function openSizeModalForProduct(id) { const p = products.find(p => p.id === id); if(p) openSizeModal(p); }
-    function openSizeModal(product) { pendingProduct = product; document.getElementById('sizeProductName').innerText = product.name; const sizes = product.metadata?.sizes || ['P','M','G','GG']; const container = document.getElementById('sizeOptionsContainer'); container.innerHTML = sizes.map(s => `<button class="size-btn" data-size="${s}">${s}</button>`).join(''); container.querySelectorAll('.size-btn').forEach(btn => btn.addEventListener('click', function() { container.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected')); this.classList.add('selected'); })); if(container.querySelector('.size-btn')) container.querySelector('.size-btn').classList.add('selected'); document.getElementById('sizeModalOverlay').classList.add('active'); }
-    function closeSizeModal() { document.getElementById('sizeModalOverlay').classList.remove('active'); pendingProduct = null; }
-    document.getElementById('confirmAddToCartBtn')?.addEventListener('click', () => { if(!pendingProduct) return; const selected = document.querySelector('#sizeOptionsContainer .size-btn.selected'); if(!selected) { showNotification('Selecione um tamanho', 'error'); return; } addToCart(pendingProduct.id, selected.dataset.size, 1); closeSizeModal(); });
-
-    function addToCart(productId, size, qty = 1) {
-      const product = products.find(p => p.id == productId);
-      if(!product || product.inventory <= 0) return showNotification('Produto esgotado!', 'error');
-      const existing = cart.find(i => i.id === productId && i.size === size);
-      if(existing) { if(existing.quantity + qty > product.inventory) return showNotification(`Limite de ${product.inventory} unidades`, 'error'); existing.quantity += qty; }
-      else { cart.push({ id: product.id, name: product.name, price: product.price, image: product.image_1 || product.image_url, quantity: qty, size: size }); }
-      updateCartUI(); showNotification(`${product.name} (${size}) adicionado!`, 'success');
-    }
-
-    function updateCartUI() { const totalItems = cart.reduce((s,i) => s + i.quantity, 0); document.querySelector('.cart-count').innerText = totalItems; localStorage.setItem('rafakits25-cart', JSON.stringify(cart)); renderCartItems(); }
-    function renderCartItems() { const container = document.getElementById('cart-items'); const summary = document.getElementById('cart-summary'); if(cart.length === 0) { container.innerHTML = '<div>Carrinho vazio</div>'; summary.innerHTML = ''; return; } let html = '', subtotal = 0; cart.forEach((item, idx) => { const itemTotal = item.price * item.quantity; subtotal += itemTotal; html += `<div class="cart-item"><img src="${item.image}" width="50"><div>${item.name} (${item.size})<br>R$ ${item.price.toFixed(2)}</div><div><button onclick="updateQty(${idx}, -1)">-</button> ${item.quantity} <button onclick="updateQty(${idx}, 1)">+</button> <button onclick="removeItem(${idx})">🗑️</button></div></div>`; }); container.innerHTML = html; let discount = 0; if(activeCoupon) discount = activeCoupon.type === 'percentage' ? subtotal * activeCoupon.discount / 100 : Math.min(activeCoupon.discount, subtotal); const total = subtotal - discount; summary.innerHTML = `<div>Subtotal: R$ ${subtotal.toFixed(2)}</div><div>Frete: Grátis</div>${activeCoupon ? `<div>Desconto: -R$ ${discount.toFixed(2)} <button onclick="removeCoupon()">❌</button></div>` : ''}<div><strong>Total: R$ ${total.toFixed(2)}</strong></div>`; }
-    window.updateQty = (idx, delta) => { if(!cart[idx]) return; let newQty = cart[idx].quantity + delta; if(newQty < 1) removeItem(idx); else { cart[idx].quantity = newQty; updateCartUI(); } };
-    window.removeItem = (idx) => { cart.splice(idx,1); updateCartUI(); };
-    function openCart() { document.getElementById('cart-overlay').classList.add('active'); document.getElementById('cart-sidebar').classList.add('active'); }
-    function closeCart() { document.getElementById('cart-overlay').classList.remove('active'); document.getElementById('cart-sidebar').classList.remove('active'); }
-    document.getElementById('cart-btn').addEventListener('click', openCart);
-    document.getElementById('cart-overlay').addEventListener('click', closeCart);
-
-    async function checkout() { /* igual ao original, mas omitido por brevidade, use o mesmo do seu código */ showNotification('Pedido enviado!', 'success'); }
-    document.getElementById('checkout-btn').addEventListener('click', checkout);
-
-    function applyCoupon() { const code = document.getElementById('coupon-input').value.toUpperCase(); if(code === 'RAFAS10') { activeCoupon = { code, discount: 10, type: 'percentage' }; document.getElementById('coupon-message').innerHTML = 'Cupom aplicado!'; renderCartItems(); } else { showNotification('Cupom inválido', 'error'); } }
-    function removeCoupon() { activeCoupon = null; document.getElementById('coupon-message').innerHTML = ''; renderCartItems(); }
-
-    function loadFlashSaleProducts() { /* opcional */ }
-
-    function updateCartPricesFromDB() { /* opcional */ }
-
-    // Filtros
-    document.querySelectorAll('.filter-btn').forEach(btn => { btn.addEventListener('click', () => { currentFilter = btn.dataset.filter; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderProducts(); }); });
-    document.getElementById('search-input').addEventListener('input', (e) => { const term = e.target.value.toLowerCase(); const filtered = products.filter(p => p.name.toLowerCase().includes(term)); const container = document.getElementById('products-grid'); if(!filtered.length) container.innerHTML = '<div>Nenhum resultado</div>'; else container.innerHTML = filtered.map(p => `<div class="product-card"><img src="${p.image_1 || p.image_url}" class="product-image"><h3>${p.name}</h3><div>R$ ${p.price.toFixed(2)}</div></div>`).join(''); });
-
-    loadProductsAndCategories();
-  </script>
+  
+  <!-- SCRIPT PRINCIPAL -->
+  <script src="script.js"></script>
 </body>
 </html>

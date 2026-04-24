@@ -1,4 +1,4 @@
-/* ===== VARIÁVEIS CSS - TEMA RAFAKITS25 (DOURADO) ===== */
+/* ===== RAFAKITS25 - ESTILOS COMPLETOS ===== */
 :root {
   --primary: #D4AF37;
   --primary-dark: #B8960F;
@@ -10,7 +10,6 @@
   --accent-light: #FFF3C4;
   --accent-dark: #9E7E0E;
   --cta-green: #2E7D32;
-  --cta-green-dark: #1B5E20;
   --success: #2E7D32;
   --danger: #D32F2F;
   --warning: #FF9800;
@@ -293,7 +292,7 @@ input, select, textarea {
   justify-content: center;
 }
 
-/* ===== HERO CARROSSEL ===== */
+/* HERO CARROSSEL */
 .hero-carousel {
   margin-top: 0;
   height: 100vh;
@@ -1266,6 +1265,16 @@ footer {
   flex-shrink: 0;
 }
 .cart-header h2 { font-size: 20px; display: flex; align-items: center; gap: var(--space-sm); }
+.close-cart {
+  background: rgba(0,0,0,0.2);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--secondary);
+  font-size: 20px;
+  cursor: pointer;
+}
 
 .cart-items {
   flex: 1;
@@ -1442,7 +1451,7 @@ footer {
 }
 
 /* MODAIS (sobre, produto, tamanho) */
-.about-overlay, .product-modal-overlay, .size-modal-overlay {
+.about-overlay, .product-modal-overlay, .modal-overlay {
   display: none;
   position: fixed;
   top: 0;
@@ -1452,11 +1461,11 @@ footer {
   background: rgba(0,0,0,0.8);
   z-index: 2002;
   backdrop-filter: blur(4px);
-}
-.about-overlay.active, .product-modal-overlay.active, .size-modal-overlay.active {
-  display: flex;
   align-items: center;
   justify-content: center;
+}
+.about-overlay.active, .product-modal-overlay.active, .modal-overlay.active {
+  display: flex;
 }
 .about-modal, .product-modal, .size-modal {
   background: var(--white);
@@ -1491,14 +1500,14 @@ footer {
 }
 .size-modal-body { text-align: center; }
 #sizeProductName { font-weight: 600; margin-bottom: 1rem; }
-.size-options-grid {
+.size-options {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
   justify-content: center;
   margin-bottom: 1.5rem;
 }
-.size-options-grid .size-btn {
+.size-options .size-btn {
   background: var(--gray-100);
   border: 2px solid var(--gray-300);
   border-radius: 40px;
@@ -1506,7 +1515,7 @@ footer {
   font-weight: 600;
   cursor: pointer;
 }
-.size-options-grid .size-btn.selected {
+.size-options .size-btn.selected {
   background: var(--primary);
   border-color: var(--primary-dark);
   color: var(--secondary);
@@ -1571,6 +1580,7 @@ footer {
   transform: translateX(400px);
   transition: transform 0.3s;
   z-index: 2000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .notification.active { transform: translateX(0); }
 .notification.error { border-left-color: var(--danger); }
@@ -1623,4 +1633,8 @@ footer {
   .hero-name { font-size: 2rem; }
   .cart-items { max-height: 35vh; }
   .checkout-form { max-height: 40vh; }
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }

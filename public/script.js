@@ -1,5 +1,4 @@
-// ========== RAFAKITS25 - SCRIPT DINÂMICO (COM NEON + MODAL DE TAMANHO) ==========
-// Configuração
+// ========== RAFAKITS25 - SCRIPT DINÂMICO (CORRIGIDO) ==========
 const API_BASE = '/.netlify/functions';
 
 // Estado global
@@ -9,6 +8,8 @@ let cart = JSON.parse(localStorage.getItem('rafakits25-cart')) || [];
 let currentFilter = 'all';
 let activeCoupon = null;
 let pendingProduct = null;      // produto temporário para o modal de tamanho
+let currentModalProduct = null;
+let currentSelectedSize = null;
 
 // ========== FUNÇÕES AUXILIARES ==========
 function toNumber(v) { return parseFloat(v) || 0; }
@@ -48,23 +49,30 @@ async function api(endpoint, id = null) {
   return data;
 }
 
-// ========== CARREGAR DADOS DO BANCO ==========
+// ========== CARREGAR DADOS (CORRIGIDO: categorias não bloqueiam produtos) ==========
 async function loadProductsAndCategories() {
   showLoading();
   try {
-    const [productsData, categoriesData] = await Promise.all([
-      api('products'),
-      api('categories')
-    ]);
+    // Carrega produtos primeiro (obrigatório)
+    const productsData = await api('products');
     products = productsData;
-    categories = categoriesData;
+    
+    // Tenta carregar categorias, mas se falhar, usa array vazio e mostra fallback
+    try {
+      categories = await api('categories');
+    } catch (err) {
+      console.warn('Erro ao carregar categorias (continuando):', err);
+      categories = [];
+    }
+    
     renderProducts();
     renderCategories();
     loadFlashSaleProducts();
     updateCartPricesFromDB();
   } catch (err) {
-    console.error('Erro ao carregar dados:', err);
+    console.error('Erro ao carregar produtos:', err);
     showNotification('Erro ao carregar produtos. Tente recarregar.', 'error');
+    document.getElementById('products-grid').innerHTML = '<div style="text-align:center; padding:3rem;">Erro ao carregar produtos. Tente novamente mais tarde.</div>';
   } finally {
     hideLoading();
   }
@@ -89,8 +97,12 @@ function updateCartPricesFromDB() {
 // ========== RENDERIZAÇÃO DE PRODUTOS ==========
 function renderProducts() {
   const container = document.getElementById('products-grid');
+  if (!container) return;
+  
   let filtered = products;
-  if (currentFilter !== 'all') filtered = products.filter(p => p.collection === currentFilter);
+  if (currentFilter !== 'all') {
+    filtered = products.filter(p => p.collection === currentFilter);
+  }
   
   if (filtered.length === 0) {
     container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-box-open" style="font-size:64px;"></i><h3>Nenhum produto encontrado</h3></div>`;
@@ -98,11 +110,11 @@ function renderProducts() {
   }
   
   container.innerHTML = filtered.map(product => {
-    const isOnSale = product.on_sale && product.original_price > product.price;
+    const isOnSale = product.on_sale && product.original_price && product.original_price > product.price;
     const isOutOfStock = product.inventory <= 0;
     const salePercentage = isOnSale ? Math.round((1 - product.price / product.original_price) * 100) : 0;
     const cat = categories.find(c => c.slug === product.collection);
-    const catName = cat ? cat.name : product.collection || 'Categoria';
+    const catName = cat ? cat.name : (product.collection || 'Categoria');
     const imgUrl = product.image_1 || product.image_url || 'https://placehold.co/300x300?text=RK25';
     
     return `<div class="product-card">
@@ -154,9 +166,16 @@ function handleBuyClick(e) {
 function renderCategories() {
   const container = document.getElementById('categories-grid');
   if (!container) return;
+  
+  // Se não há categorias, exibe mensagem amigável
+  if (!categories || categories.length === 0) {
+    container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:2rem;">Carregando categorias...</div>`;
+    return;
+  }
+  
   container.innerHTML = categories.map(cat => {
     const count = products.filter(p => p.collection === cat.slug).length;
-    return `<div class="category-card" onclick="filterProducts('${cat.slug}')">
+    return `<div class="category-card" onclick="filterProducts('${cat.slug}', this)">
       <div class="category-icon"><i class="fas ${cat.icon || 'fa-tag'}"></i></div>
       <h3>${cat.name}</h3>
       <p style="color:var(--gray-600); font-size:14px;">${count} produtos</p>
@@ -164,12 +183,23 @@ function renderCategories() {
   }).join('');
 }
 
-function filterProducts(categoryId) {
+// CORRIGIDO: recebe o elemento clicado para ativar visualmente
+function filterProducts(categoryId, btnElement = null) {
   currentFilter = categoryId;
-  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-  if (event && event.target) event.target.classList.add('active');
+  // Atualiza botões de filtro ativos (se houver elementos .filter-btn)
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  if (filterBtns.length) {
+    filterBtns.forEach(btn => btn.classList.remove('active'));
+    if (btnElement && btnElement.classList && btnElement.classList.contains('filter-btn')) {
+      btnElement.classList.add('active');
+    } else {
+      // Tenta encontrar o botão correspondente pelo atributo data-filter
+      const matchingBtn = Array.from(filterBtns).find(btn => btn.dataset.filter === categoryId);
+      if (matchingBtn) matchingBtn.classList.add('active');
+    }
+  }
   renderProducts();
-  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
 }
 
 // ========== MODAL DE SELEÇÃO DE TAMANHO ==========
@@ -178,8 +208,8 @@ function openSizeModal(product) {
   const sizes = product.metadata?.sizes || ['P', 'M', 'G', 'GG'];
   document.getElementById('sizeProductName').innerText = product.name;
   const container = document.getElementById('sizeOptionsContainer');
+  if (!container) return;
   container.innerHTML = sizes.map(size => `<button class="size-btn" data-size="${size}">${size}</button>`).join('');
-  // Seleciona primeiro por padrão
   const firstBtn = container.querySelector('.size-btn');
   if (firstBtn) firstBtn.classList.add('selected');
   container.querySelectorAll('.size-btn').forEach(btn => {
@@ -209,9 +239,6 @@ document.getElementById('confirmAddToCartBtn')?.addEventListener('click', () => 
 });
 
 // ========== MODAL PRODUTO (detalhes) ==========
-let currentModalProduct = null;
-let currentSelectedSize = null;
-
 function openProductModal(productId) {
   const product = products.find(p => p.id == productId);
   if (!product) return;
@@ -228,7 +255,7 @@ function openProductModal(productId) {
   let starsHtml = '<i class="fas fa-star"></i>'.repeat(starsFull) + '<i class="far fa-star"></i>'.repeat(5 - starsFull);
   document.getElementById('modal-stars').innerHTML = starsHtml;
   document.getElementById('modal-rating-count').innerText = `(${product.rating || 4})`;
-  const isOnSale = product.on_sale && product.original_price > product.price;
+  const isOnSale = product.on_sale && product.original_price && product.original_price > product.price;
   document.getElementById('modal-current-price').innerHTML = `R$ ${product.price.toFixed(2)}`;
   if (isOnSale) {
     document.getElementById('modal-original-price').innerHTML = `R$ ${product.original_price.toFixed(2)}`;
@@ -240,12 +267,14 @@ function openProductModal(productId) {
   document.getElementById('modal-stock').innerHTML = product.inventory > 0 ? '<i class="fas fa-check-circle"></i> Em estoque' : '<i class="fas fa-times-circle"></i> Esgotado';
   
   const thumbContainer = document.getElementById('modal-thumbnails');
-  const images = [product.image_1, product.image_2, product.image_3].filter(img => img);
-  if (images.length === 0) images.push(imgUrl);
+  let images = [product.image_1, product.image_2, product.image_3].filter(img => img && img.trim());
+  if (images.length === 0 && imgUrl) images.push(imgUrl);
   thumbContainer.innerHTML = images.map((img, idx) => `<img src="${img}" class="thumbnail ${idx === 0 ? 'active' : ''}" onclick="changeMainImage(this, '${img}')">`).join('');
   
   const detailsContainer = document.getElementById('product-details-under-gallery');
-  detailsContainer.innerHTML = `<span><i class="fas fa-tag"></i> <strong>Marca:</strong> ${product.metadata?.marca || 'Rafakits25'}</span><span><i class="fas fa-weight-hanging"></i> <strong>Material:</strong> ${product.metadata?.material || 'Algodão Premium'}</span><span><i class="fas fa-ruler"></i> <strong>Tamanhos:</strong> ${(product.metadata?.sizes || ['P','M','G','GG']).join(', ')}</span>`;
+  if (detailsContainer) {
+    detailsContainer.innerHTML = `<span><i class="fas fa-tag"></i> <strong>Marca:</strong> ${product.metadata?.marca || 'Rafakits25'}</span><span><i class="fas fa-weight-hanging"></i> <strong>Material:</strong> ${product.metadata?.material || 'Algodão Premium'}</span><span><i class="fas fa-ruler"></i> <strong>Tamanhos:</strong> ${(product.metadata?.sizes || ['P','M','G','GG']).join(', ')}</span>`;
+  }
   
   const sizeContainer = document.getElementById('product-sizes-container');
   if (sizeContainer) {
@@ -323,7 +352,7 @@ function addToCart(productId, size, qty = 1) {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image_1 || product.image_url,
+      image: product.image_1 || product.image_url || 'https://placehold.co/80',
       quantity: qty,
       size: size
     });
@@ -353,8 +382,9 @@ function renderCartItems() {
   cart.forEach((item, idx) => {
     const itemTotal = item.price * item.quantity;
     subtotal += itemTotal;
+    const imgSrc = item.image && item.image !== 'null' ? item.image : 'https://placehold.co/80';
     html += `<div class="cart-item">
-      <img src="${item.image}" class="cart-item-image" onerror="this.src='https://placehold.co/80'">
+      <img src="${imgSrc}" class="cart-item-image" onerror="this.src='https://placehold.co/80'">
       <div class="cart-item-info">
         <div class="cart-item-title">${item.name} (${item.size})</div>
         <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
@@ -405,7 +435,7 @@ function closeCart() {
   document.getElementById('cart-sidebar').classList.remove('active');
 }
 
-// ========== CHECKOUT (WhatsApp + PIX + atualiza estoque) ==========
+// ========== CHECKOUT (WhatsApp + PIX) ==========
 async function checkout() {
   const name = document.getElementById('customer-name')?.value.trim();
   const phone = document.getElementById('customer-phone')?.value.trim();
@@ -425,33 +455,27 @@ async function checkout() {
   let discount = activeCoupon ? (activeCoupon.type === 'percentage' ? subtotal * activeCoupon.discount / 100 : Math.min(activeCoupon.discount, subtotal)) : 0;
   let total = subtotal - discount;
 
-  const orderData = {
-    customer_name: name,
-    customer_phone: phone,
-    items: cart.map(item => ({
-      name: item.name,
-      size: item.size,
-      quantity: item.quantity,
-      price: item.price
-    })),
-    total_amount: total,
-    status: 'pending'
-  };
-
-  showLoading();
+  // Opcional: enviar pedido para API (se existir)
   try {
-    const response = await fetch(`${API_BASE}/orders`, {
+    const orderData = {
+      customer_name: name,
+      customer_phone: phone,
+      items: cart.map(item => ({
+        name: item.name,
+        size: item.size,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      total_amount: total,
+      status: 'pending'
+    };
+    await fetch(`${API_BASE}/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(orderData)
     });
-    if (!response.ok) throw new Error(await response.text());
-    await response.json();
   } catch (err) {
-    console.error(err);
-    showNotification('Erro ao processar pedido. Tente novamente.', 'error');
-    hideLoading();
-    return;
+    console.warn('Erro ao salvar pedido (continuando):', err);
   }
 
   const lojaWhatsApp = '5533999953164';
@@ -465,18 +489,13 @@ async function checkout() {
   activeCoupon = null;
   updateCartUI();
   closeCart();
-  document.getElementById('customer-name').value = '';
-  document.getElementById('customer-phone').value = '';
-  document.getElementById('customer-cep').value = '';
-  document.getElementById('customer-address').value = '';
-  document.getElementById('customer-number').value = '';
-  document.getElementById('customer-neighborhood').value = '';
-  document.getElementById('customer-city').value = '';
-  document.getElementById('customer-state').value = '';
+  // Limpar campos
+  ['customer-name', 'customer-phone', 'customer-cep', 'customer-address', 'customer-number', 'customer-neighborhood', 'customer-city', 'customer-state'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   
-  await loadProductsAndCategories();
-  showNotification('✅ Pedido finalizado! Estoque atualizado. Você será redirecionado ao WhatsApp da loja.', 'success');
-  hideLoading();
+  showNotification('✅ Pedido finalizado! Você será redirecionado ao WhatsApp da loja.', 'success');
 }
 
 // ========== CUPONS ==========
@@ -515,7 +534,7 @@ function loadFlashSaleProducts() {
     const salePercentage = Math.round((1 - p.price / p.original_price) * 100);
     const cat = categories.find(c => c.slug === p.collection);
     const catName = cat ? cat.name : p.collection;
-    const imgUrl = p.image_1 || p.image_url;
+    const imgUrl = p.image_1 || p.image_url || 'https://placehold.co/300x300';
     return `<div class="flash-sale-card" onclick="openProductModal(${p.id})">
       <div class="sale-ribbon">-${salePercentage}%</div>
       <img src="${imgUrl}" class="product-image" onerror="this.src='https://placehold.co/300x300'">
@@ -557,10 +576,14 @@ function startFlashSaleTimer() {
     const hours = Math.floor((diff % 86400000) / 3600000);
     const mins = Math.floor((diff % 3600000) / 60000);
     const secs = Math.floor((diff % 60000) / 1000);
-    document.getElementById('timer-days').innerText = String(days).padStart(2, '0');
-    document.getElementById('timer-hours').innerText = String(hours).padStart(2, '0');
-    document.getElementById('timer-minutes').innerText = String(mins).padStart(2, '0');
-    document.getElementById('timer-seconds').innerText = String(secs).padStart(2, '0');
+    const daysEl = document.getElementById('timer-days');
+    const hoursEl = document.getElementById('timer-hours');
+    const minsEl = document.getElementById('timer-minutes');
+    const secsEl = document.getElementById('timer-seconds');
+    if (daysEl) daysEl.innerText = String(days).padStart(2, '0');
+    if (hoursEl) hoursEl.innerText = String(hours).padStart(2, '0');
+    if (minsEl) minsEl.innerText = String(mins).padStart(2, '0');
+    if (secsEl) secsEl.innerText = String(secs).padStart(2, '0');
   }
   update();
   setInterval(update, 1000);
@@ -612,7 +635,7 @@ if (heroSection) {
   heroSection.addEventListener('mouseleave', () => { heroAutoplay = setInterval(nextHeroSlide, 5000); });
 }
 
-// Botões do hero (também abrem modal de tamanho)
+// Botões do hero (se existirem)
 document.querySelectorAll('.hero-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const name = btn.dataset.name, price = parseFloat(btn.dataset.price), img = btn.dataset.img;
@@ -636,7 +659,7 @@ function setupEvents() {
     const filtered = products.filter(p => p.name.toLowerCase().includes(term));
     const container = document.getElementById('products-grid');
     if (!filtered.length) container.innerHTML = '<div style="text-align:center; padding:3rem;"><i class="fas fa-search"></i><h3>Nenhum produto encontrado</h3></div>';
-    else container.innerHTML = filtered.map(p => `<div class="product-card" onclick="openProductModal(${p.id})"><img src="${p.image_1 || p.image_url}"><h3>${p.name}</h3><div class="price">R$ ${p.price.toFixed(2)}</div></div>`).join('');
+    else container.innerHTML = filtered.map(p => `<div class="product-card" onclick="openProductModal(${p.id})"><img src="${p.image_1 || p.image_url || 'https://placehold.co/300x300'}" class="product-image"><h3>${p.name}</h3><div class="price">R$ ${p.price.toFixed(2)}</div></div>`).join('');
   });
   document.getElementById('newsletter-form')?.addEventListener('submit', e => { e.preventDefault(); showNotification('Inscrito com sucesso!'); e.target.reset(); });
   document.getElementById('coupon-input')?.addEventListener('keypress', e => { if (e.key === 'Enter') applyCoupon(); });
