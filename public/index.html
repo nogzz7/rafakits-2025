@@ -11,6 +11,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Swiper CSS (apenas para os banners secundários) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  
   <!-- CSS principal -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -222,10 +225,10 @@
       <div class="section-header">
         <h2 class="section-title">Produtos <span>em Destaque</span></h2>
         <div class="products-filter">
-          <button class="filter-btn active" data-filter="all">Todos</button>
-          <button class="filter-btn" data-filter="times">Camisas de Time</button>
-          <button class="filter-btn" data-filter="oversized">Oversized</button>
-          <button class="filter-btn" data-filter="shorts">Shorts/Calças</button>
+          <button class="filter-btn active" onclick="filterProducts('all')">Todos</button>
+          <button class="filter-btn" onclick="filterProducts('times')">Camisas de Time</button>
+          <button class="filter-btn" onclick="filterProducts('oversized')">Oversized</button>
+          <button class="filter-btn" onclick="filterProducts('shorts')">Shorts/Calças</button>
         </div>
       </div>
       <div class="products-grid" id="products-grid"></div>
@@ -325,18 +328,18 @@
     </div>
   </footer>
   
-  <!-- CARRINHO SIDEBAR -->
+  <!-- CARRINHO (com apenas PIX) -->
   <div class="cart-overlay" id="cart-overlay"></div>
   <div class="cart-sidebar" id="cart-sidebar">
     <div class="cart-header">
       <h2><i class="fas fa-shopping-cart"></i> Seu Carrinho</h2>
-      <button class="close-cart" onclick="closeCart()"><i class="fas fa-times"></i></button>
+      <button class="cart-btn" onclick="closeCart()" style="font-size: 20px;"><i class="fas fa-times"></i></button>
     </div>
     <div class="cart-items" id="cart-items"></div>
     <div class="cart-summary" id="cart-summary"></div>
     <div class="coupon-section">
       <div class="coupon-form">
-        <input type="text" class="coupon-input" id="coupon-input" placeholder="Digite seu cupom">
+        <input type="text" class="coupon-input" id="coupon-input" placeholder="Digite seu cupom de desconto">
         <button class="btn-coupon" onclick="applyCoupon()">Aplicar</button>
       </div>
       <div id="coupon-message" style="margin-top: 8px; font-size: 13px;"></div>
@@ -391,7 +394,7 @@
     </div>
   </div>
   
-  <!-- MODAL SOBRE NÓS -->
+  <!-- SOBRE NÓS MODAL -->
   <div class="about-overlay" id="about-overlay" onclick="closeAbout()"></div>
   <div class="about-modal" id="about-modal">
     <div class="about-header">
@@ -411,25 +414,7 @@
         <div class="value-item"><div class="value-icon"><i class="fas fa-rocket"></i></div><h4>Inovação</h4><p>Sempre atualizados com as tendências</p></div>
         <div class="value-item"><div class="value-icon"><i class="fas fa-users"></i></div><h4>Comunidade</h4><p>Valorizamos cada cliente</p></div>
       </div>
-      <p style="margin-top: 30px; font-weight: 600; color: var(--primary); text-align: center;">RAFAKITS25 – Sua referência no estilo está aqui!</p>
-    </div>
-  </div>
-  
-  <!-- MODAL DE SELEÇÃO DE TAMANHO -->
-  <div class="modal-overlay" id="sizeModalOverlay">
-    <div class="size-modal">
-      <div class="size-modal-header">
-        <h3>Selecione o tamanho</h3>
-        <button class="close-size-modal" onclick="closeSizeModal()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="size-modal-body">
-        <p id="sizeProductName"></p>
-        <div class="size-options" id="sizeOptionsContainer"></div>
-        <div class="size-modal-actions">
-          <button id="confirmAddToCartBtn" class="btn-primary">Adicionar ao carrinho</button>
-          <button class="btn-outline" onclick="closeSizeModal()">Cancelar</button>
-        </div>
-      </div>
+      <p style="margin-top: var(--space-xl); font-weight: 600; color: var(--primary); text-align: center;">RAFAKITS25 – Sua referência no estilo está aqui!</p>
     </div>
   </div>
   
@@ -476,10 +461,9 @@
     </div>
   </div>
   
-  <!-- NOTIFICAÇÃO -->
   <div class="notification" id="notification"></div>
   
-  <!-- SCRIPT PRINCIPAL -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
