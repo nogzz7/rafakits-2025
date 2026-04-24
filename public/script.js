@@ -10,7 +10,25 @@ let currentFilter = 'all';
 let activeCoupon = null;
 
 // ========== FUNÇÕES AUXILIARES ==========
-function toNumber(v) { return parseFloat(v) || 0; }
+function toNumber(v) {
+  const num = parseFloat(v);
+  return isNaN(num) ? 0 : num;
+}
+
+function safeToFixed(value, decimals = 2) {
+  if (value === null || value === undefined || isNaN(value)) return '0.00';
+  return parseFloat(value).toFixed(decimals);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
 
 function showNotification(msg, type = 'success') {
   const n = document.getElementById('notification');
@@ -47,7 +65,7 @@ async function api(endpoint, id = null) {
   return data;
 }
 
-// ========== CARREGAR DADOS DO BANCO ==========
+// ========== CARREGAR DADOS DO BANCO (com sanitização extra) ==========
 async function loadProductsAndCategories() {
   showLoading();
   try {
@@ -55,7 +73,13 @@ async function loadProductsAndCategories() {
       api('products'),
       api('categories')
     ]);
-    products = productsData;
+    // Sanitização adicional para garantir price e original_price são números
+    products = productsData.map(p => ({
+      ...p,
+      price: typeof p.price === 'number' && !isNaN(p.price) ? p.price : 0,
+      original_price: (p.original_price && typeof p.original_price === 'number' && !isNaN(p.original_price)) ? p.original_price : null,
+      inventory: parseInt(p.inventory) || 0,
+    }));
     categories = categoriesData;
     renderProducts();
     renderCategories();
@@ -100,9 +124,11 @@ function renderProducts() {
   }
   
   container.innerHTML = filtered.map(product => {
-    const isOnSale = product.on_sale && product.original_price > product.price;
+    const currentPrice = toNumber(product.price);
+    const originalPrice = product.original_price ? toNumber(product.original_price) : null;
+    const isOnSale = product.on_sale && originalPrice > currentPrice;
     const isOutOfStock = product.inventory <= 0;
-    const salePercentage = isOnSale ? Math.round((1 - product.price / product.original_price) * 100) : 0;
+    const salePercentage = isOnSale ? Math.round((1 - currentPrice / originalPrice) * 100) : 0;
     const cat = categories.find(c => c.slug === product.collection);
     const catName = cat ? cat.name : product.collection || 'Categoria';
     const imgUrl = product.image_1 || product.image_url || 'https://placehold.co/300x300?text=RK25';
@@ -115,8 +141,8 @@ function renderProducts() {
       ${isOutOfStock ? `<div class="out-of-stock-label">ESGOTADO</div>` : ''}
       <img src="${imgUrl}" alt="${product.name}" class="product-image" onclick="openProductModal(${product.id})" onerror="this.src='https://placehold.co/300x300?text=RK25'">
       <div class="product-info">
-        <span class="product-category" onclick="openProductModal(${product.id})">${catName}</span>
-        <h3 class="product-title" onclick="openProductModal(${product.id})">${product.name}</h3>
+        <span class="product-category" onclick="openProductModal(${product.id})">${escapeHtml(catName)}</span>
+        <h3 class="product-title" onclick="openProductModal(${product.id})">${escapeHtml(product.name)}</h3>
         <div class="product-rating" onclick="openProductModal(${product.id})">
           <div class="stars">${'<i class="fas fa-star"></i>'.repeat(Math.floor(product.rating || 4))}</div>
           <span class="rating-count">(${product.rating || 4})</span>
@@ -125,10 +151,10 @@ function renderProducts() {
           ${isOutOfStock ? '<i class="fas fa-times-circle out-of-stock"></i> <span class="out-of-stock">Esgotado</span>' : '<i class="fas fa-check-circle in-stock"></i> <span class="in-stock">Em estoque</span>'}
         </div>
         <div class="product-price" onclick="openProductModal(${product.id})">
-          ${isOnSale ? `<span class="original-price">R$ ${product.original_price.toFixed(2)}</span>` : ''}
-          <span class="current-price">R$ ${product.price.toFixed(2)}</span>
+          ${isOnSale ? `<span class="original-price">R$ ${safeToFixed(originalPrice)}</span>` : ''}
+          <span class="current-price">R$ ${safeToFixed(currentPrice)}</span>
         </div>
-        <p class="installment" onclick="openProductModal(${product.id})">em até <strong>6x de R$ ${(product.price / 6).toFixed(2)}</strong> sem juros</p>
+        <p class="installment" onclick="openProductModal(${product.id})">em até <strong>6x de R$ ${safeToFixed(currentPrice / 6)}</strong> sem juros</p>
         ${!isOutOfStock ? `<button class="btn-buy" onclick="event.stopPropagation(); addToCart(${product.id}, 'M')"><i class="fas fa-shopping-cart"></i> COMPRAR</button>` : ''}
       </div>
     </div>`;
@@ -142,7 +168,7 @@ function renderCategories() {
     const count = products.filter(p => p.collection === cat.slug).length;
     return `<div class="category-card" onclick="filterProducts('${cat.slug}')">
       <div class="category-icon"><i class="fas ${cat.icon || 'fa-tag'}"></i></div>
-      <h3>${cat.name}</h3>
+      <h3>${escapeHtml(cat.name)}</h3>
       <p style="color:var(--gray-600); font-size:14px;">${count} produtos</p>
     </div>`;
   }).join('');
@@ -181,15 +207,17 @@ function openProductModal(productId) {
   document.getElementById('modal-stars').innerHTML = starsHtml;
   document.getElementById('modal-rating-count').innerText = `(${product.rating || 4})`;
   
-  const isOnSale = product.on_sale && product.original_price > product.price;
-  document.getElementById('modal-current-price').innerHTML = `R$ ${product.price.toFixed(2)}`;
+  const currentPrice = toNumber(product.price);
+  const originalPrice = product.original_price ? toNumber(product.original_price) : null;
+  const isOnSale = product.on_sale && originalPrice > currentPrice;
+  document.getElementById('modal-current-price').innerHTML = `R$ ${safeToFixed(currentPrice)}`;
   if (isOnSale) {
-    document.getElementById('modal-original-price').innerHTML = `R$ ${product.original_price.toFixed(2)}`;
+    document.getElementById('modal-original-price').innerHTML = `R$ ${safeToFixed(originalPrice)}`;
     document.getElementById('modal-original-price').style.display = 'inline';
   } else {
     document.getElementById('modal-original-price').style.display = 'none';
   }
-  document.getElementById('modal-installment').innerHTML = `em até <strong>6x de R$ ${(product.price / 6).toFixed(2)}</strong> sem juros`;
+  document.getElementById('modal-installment').innerHTML = `em até <strong>6x de R$ ${safeToFixed(currentPrice / 6)}</strong> sem juros`;
   
   const inStock = product.inventory > 0;
   document.getElementById('modal-stock').innerHTML = inStock 
@@ -289,7 +317,7 @@ function addToCart(productId, size, qty = 1) {
     cart.push({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: toNumber(product.price),
       image: product.image_1 || product.image_url,
       quantity: qty,
       size: size
@@ -323,8 +351,8 @@ function renderCartItems() {
     html += `<div class="cart-item">
       <img src="${item.image}" class="cart-item-image" onerror="this.src='https://placehold.co/80'">
       <div class="cart-item-info">
-        <div class="cart-item-title">${item.name} (${item.size})</div>
-        <div class="cart-item-price">R$ ${item.price.toFixed(2)}</div>
+        <div class="cart-item-title">${escapeHtml(item.name)} (${item.size})</div>
+        <div class="cart-item-price">R$ ${safeToFixed(item.price)}</div>
         <div class="quantity-control">
           <button class="quantity-btn" onclick="updateQty(${idx}, -1)">-</button>
           <span>${item.quantity}</span>
@@ -343,10 +371,10 @@ function renderCartItems() {
   const total = subtotal - discount;
   if (summary) {
     summary.innerHTML = `
-      <div class="summary-row"><span>Subtotal:</span><span>R$ ${subtotal.toFixed(2)}</span></div>
+      <div class="summary-row"><span>Subtotal:</span><span>R$ ${safeToFixed(subtotal)}</span></div>
       <div class="summary-row"><span>Frete:</span><span>Grátis</span></div>
-      ${activeCoupon ? `<div class="summary-row discount-row"><span>Desconto (${activeCoupon.code}):</span><span>- R$ ${discount.toFixed(2)}</span><button onclick="removeCoupon()" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fas fa-times"></i></button></div>` : ''}
-      <div class="summary-row summary-total"><span>Total:</span><span>R$ ${total.toFixed(2)}</span></div>
+      ${activeCoupon ? `<div class="summary-row discount-row"><span>Desconto (${activeCoupon.code}):</span><span>- R$ ${safeToFixed(discount)}</span><button onclick="removeCoupon()" style="background:none; border:none; color:#ef4444; cursor:pointer;"><i class="fas fa-times"></i></button></div>` : ''}
+      <div class="summary-row summary-total"><span>Total:</span><span>R$ ${safeToFixed(total)}</span></div>
     `;
   }
 }
@@ -388,8 +416,8 @@ async function checkout() {
   let discount = activeCoupon ? (activeCoupon.type === 'percentage' ? subtotal * activeCoupon.discount / 100 : Math.min(activeCoupon.discount, subtotal)) : 0;
   let total = subtotal - discount;
   let msg = `*🛍️ RAFakits25 - NOVO PEDIDO*\n\nCliente: ${name}\nWhatsApp: ${phone}\nEndereço: ${address}\nPagamento: ${payment}\n\n📦 ITENS:\n`;
-  cart.forEach(i => { msg += `${i.name} (${i.size}) x${i.quantity} = R$ ${(i.price * i.quantity).toFixed(2)}\n`; });
-  msg += `\nSubtotal: R$ ${subtotal.toFixed(2)}${activeCoupon ? `\nDesconto: -R$ ${discount.toFixed(2)}` : ''}\n*TOTAL: R$ ${total.toFixed(2)}*`;
+  cart.forEach(i => { msg += `${i.name} (${i.size}) x${i.quantity} = R$ ${safeToFixed(i.price * i.quantity)}\n`; });
+  msg += `\nSubtotal: R$ ${safeToFixed(subtotal)}${activeCoupon ? `\nDesconto: -R$ ${safeToFixed(discount)}` : ''}\n*TOTAL: R$ ${safeToFixed(total)}*`;
   window.open(`https://wa.me/55${phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
   cart = [];
   activeCoupon = null;
@@ -429,6 +457,7 @@ function loadFlashSaleProducts() {
   const featuredSales = saleProducts.slice(0, 4);
   const container = document.getElementById('flash-sale-products');
   if (!container) return;
+  
   if (featuredSales.length === 0) {
     container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;">
       <i class="fas fa-tag" style="font-size:48px; color:var(--gray-300);"></i>
@@ -437,26 +466,30 @@ function loadFlashSaleProducts() {
     </div>`;
     return;
   }
+  
   container.innerHTML = featuredSales.map(p => {
-    const salePercentage = Math.round((1 - p.price / p.original_price) * 100);
-    const savings = p.original_price - p.price;
+    const currentPrice = toNumber(p.price);
+    const originalPrice = p.original_price ? toNumber(p.original_price) : currentPrice;
+    const salePercentage = originalPrice > currentPrice ? Math.round((1 - currentPrice / originalPrice) * 100) : 0;
+    const savings = originalPrice - currentPrice;
     const cat = categories.find(c => c.slug === p.collection);
     const catName = cat ? cat.name : p.collection;
-    const imgUrl = p.image_1 || p.image_url;
+    const imgUrl = p.image_1 || p.image_url || 'https://placehold.co/300x300?text=RK25';
+    
     return `<div class="flash-sale-card" onclick="openProductModal(${p.id})">
       <div class="sale-ribbon">-${salePercentage}%</div>
-      <img src="${imgUrl}" class="product-image" onerror="this.src='https://placehold.co/300x300'">
+      <img src="${imgUrl}" class="product-image" onerror="this.src='https://placehold.co/300x300'" loading="lazy">
       <div class="product-info">
-        <span class="product-category">${catName}</span>
-        <h3 class="product-title">${p.name}</h3>
+        <span class="product-category">${escapeHtml(catName)}</span>
+        <h3 class="product-title">${escapeHtml(p.name)}</h3>
         <div class="flash-sale-price">
-          ${p.original_price ? `<span class="original">R$ ${p.original_price.toFixed(2)}</span>` : ''}
-          <span class="current">R$ ${p.price.toFixed(2)}</span>
+          ${originalPrice > currentPrice ? `<span class="original">R$ ${safeToFixed(originalPrice)}</span>` : ''}
+          <span class="current">R$ ${safeToFixed(currentPrice)}</span>
           <span class="discount-badge">-${salePercentage}%</span>
         </div>
         <div class="flash-sale-savings">
           <i class="fas fa-piggy-bank"></i>
-          <span>Economize R$ ${savings.toFixed(2)}</span>
+          <span>Economize R$ ${safeToFixed(savings)}</span>
         </div>
         <button class="btn-flash-sale" onclick="event.stopPropagation(); addToCart(${p.id}, 'M')">
           <i class="fas fa-shopping-cart"></i> COMPRAR AGORA
@@ -590,7 +623,7 @@ function setupEvents() {
     if (!filtered.length) {
       container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fas fa-search" style="font-size:64px;"></i><h3>Nenhum produto encontrado</h3></div>`;
     } else {
-      container.innerHTML = filtered.map(p => `<div class="product-card" onclick="openProductModal(${p.id})"><img src="${p.image_1 || p.image_url}"><h3>${p.name}</h3><div class="price">R$ ${p.price.toFixed(2)}</div></div>`).join('');
+      container.innerHTML = filtered.map(p => `<div class="product-card" onclick="openProductModal(${p.id})"><img src="${p.image_1 || p.image_url}"><h3>${p.name}</h3><div class="price">R$ ${safeToFixed(p.price)}</div></div>`).join('');
     }
   });
   document.getElementById('newsletter-form')?.addEventListener('submit', e => { e.preventDefault(); showNotification('Inscrito com sucesso!', 'success'); e.target.reset(); });
