@@ -2240,3 +2240,21 @@ footer {
   .product-modal-current { font-size: 1.5rem; }
   .flash-sale-products { grid-template-columns: 1fr; }
 }
+.size-option-btn {
+  width: 70px;
+  height: 70px;
+  background: #f0f0f0;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.size-option-btn:hover {
+  background: #e0e0e0;
+  border-color: #aaa;
+}
