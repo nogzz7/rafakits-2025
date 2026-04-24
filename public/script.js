@@ -65,7 +65,7 @@ async function api(endpoint, id = null) {
   return data;
 }
 
-// ========== CARREGAR DADOS DO BANCO (com sanitização extra) ==========
+// ========== CARREGAR DADOS DO BANCO ==========
 async function loadProductsAndCategories() {
   showLoading();
   try {
@@ -73,7 +73,6 @@ async function loadProductsAndCategories() {
       api('products'),
       api('categories')
     ]);
-    // Sanitização adicional para garantir price e original_price são números
     products = productsData.map(p => ({
       ...p,
       price: typeof p.price === 'number' && !isNaN(p.price) ? p.price : 0,
@@ -107,6 +106,70 @@ function updateCartPricesFromDB() {
     localStorage.setItem('rafakits25-cart', JSON.stringify(cart));
     updateCartUI();
   }
+}
+
+// ========== SELETOR DE TAMANHO (MINI MODAL) ==========
+// Cria dinamicamente um modal flutuante para escolher o tamanho
+let activeSizePicker = null;
+
+function askSizeAndAddToCart(productId) {
+  const product = products.find(p => p.id == productId);
+  if (!product) {
+    showNotification('Produto não encontrado', 'error');
+    return;
+  }
+  if (product.inventory <= 0) {
+    showNotification('Produto esgotado!', 'error');
+    return;
+  }
+
+  // Pega os tamanhos disponíveis (do metadata ou padrão)
+  const availableSizes = product.metadata?.sizes || ['P', 'M', 'G', 'GG'];
+  
+  // Cria o modal de seleção de tamanho
+  const modalOverlay = document.createElement('div');
+  modalOverlay.className = 'size-picker-overlay';
+  modalOverlay.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+    z-index: 10000;
+  `;
+  
+  const modalContent = document.createElement('div');
+  modalContent.style.cssText = `
+    background: white; border-radius: 16px; padding: 24px; max-width: 300px; width: 90%;
+    text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    font-family: 'Inter', sans-serif;
+  `;
+  modalContent.innerHTML = `
+    <h3 style="margin-top:0">Escolha o tamanho</h3>
+    <p style="margin-bottom:16px">${escapeHtml(product.name)}</p>
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px;">
+      ${availableSizes.map(size => `<button class="size-option-btn" data-size="${size}" style="background: #f0f0f0; border: none; padding: 10px 18px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: all 0.2s;">${size}</button>`).join('')}
+    </div>
+    <button id="cancel-size-picker" style="background: #ccc; border: none; padding: 8px 16px; border-radius: 40px; cursor: pointer;">Cancelar</button>
+  `;
+  
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
+  
+  // Adiciona eventos aos botões de tamanho
+  document.querySelectorAll('.size-option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const selectedSize = btn.dataset.size;
+      addToCart(product.id, selectedSize, 1);
+      document.body.removeChild(modalOverlay);
+    });
+  });
+  
+  document.getElementById('cancel-size-picker').addEventListener('click', () => {
+    document.body.removeChild(modalOverlay);
+  });
+  
+  // Fechar ao clicar fora do conteúdo
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) document.body.removeChild(modalOverlay);
+  });
 }
 
 // ========== RENDERIZAÇÃO DE PRODUTOS ==========
@@ -155,7 +218,7 @@ function renderProducts() {
           <span class="current-price">R$ ${safeToFixed(currentPrice)}</span>
         </div>
         <p class="installment" onclick="openProductModal(${product.id})">em até <strong>6x de R$ ${safeToFixed(currentPrice / 6)}</strong> sem juros</p>
-        ${!isOutOfStock ? `<button class="btn-buy" onclick="event.stopPropagation(); addToCart(${product.id}, 'M')"><i class="fas fa-shopping-cart"></i> COMPRAR</button>` : ''}
+        ${!isOutOfStock ? `<button class="btn-buy" onclick="event.stopPropagation(); askSizeAndAddToCart(${product.id})"><i class="fas fa-shopping-cart"></i> COMPRAR</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -491,7 +554,7 @@ function loadFlashSaleProducts() {
           <i class="fas fa-piggy-bank"></i>
           <span>Economize R$ ${safeToFixed(savings)}</span>
         </div>
-        <button class="btn-flash-sale" onclick="event.stopPropagation(); addToCart(${p.id}, 'M')">
+        <button class="btn-flash-sale" onclick="event.stopPropagation(); askSizeAndAddToCart(${p.id})">
           <i class="fas fa-shopping-cart"></i> COMPRAR AGORA
         </button>
       </div>
@@ -523,7 +586,7 @@ function startFlashSaleTimer() {
   setInterval(update, 1000);
 }
 
-// ========== CARROSSEL MOBILE (setas de navegação para flash sale) ==========
+// ========== CARROSSEL MOBILE ==========
 function initFlashSaleCarousel() {
   if (window.innerWidth > 768) return;
   const container = document.querySelector('.flash-sale-products');
@@ -546,7 +609,7 @@ function initFlashSaleCarousel() {
   });
 }
 
-// ========== HERO CARROSSEL (com setas, dots e autoplay) ==========
+// ========== HERO CARROSSEL ==========
 let currentHeroSlide = 0;
 const heroSlides = document.querySelectorAll('.hero-item');
 const heroDots = document.querySelectorAll('.hero-dot');
@@ -576,7 +639,6 @@ function prevHeroSlide() {
   showHeroSlide(currentHeroSlide - 1);
 }
 
-// Eventos das setas e dots
 const heroPrevBtn = document.getElementById('hero-prev');
 const heroNextBtn = document.getElementById('hero-next');
 if (heroPrevBtn) heroPrevBtn.addEventListener('click', prevHeroSlide);
@@ -585,9 +647,7 @@ heroDots.forEach((dot, idx) => {
   dot.addEventListener('click', () => showHeroSlide(idx));
 });
 
-// Autoplay a cada 5 segundos
 let heroAutoplay = setInterval(nextHeroSlide, 5000);
-// Pausar autoplay quando o mouse estiver sobre o carrossel
 const heroSection = document.querySelector('.hero-carousel');
 if (heroSection) {
   heroSection.addEventListener('mouseenter', () => clearInterval(heroAutoplay));
@@ -596,16 +656,15 @@ if (heroSection) {
   });
 }
 
-// Botões de compra do hero
 document.querySelectorAll('.hero-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const name = btn.dataset.name, price = parseFloat(btn.dataset.price), img = btn.dataset.img;
-    // Procura o produto pelo nome (simulação)
     const prod = products.find(p => p.name === name);
-    if (prod) addToCart(prod.id, 'M');
+    if (prod) askSizeAndAddToCart(prod.id);
     else {
       const tempProd = { id: Date.now(), name, price, image_url: img, inventory: 10 };
-      addToCart(tempProd.id, 'M');
+      // Para produto não cadastrado, pergunta tamanho mesmo assim
+      askSizeAndAddToCart(tempProd.id);
     }
   });
 });
@@ -638,7 +697,6 @@ function setupEvents() {
   });
 }
 
-// INÍCIO
 document.addEventListener('DOMContentLoaded', () => {
   setupEvents();
   loadProductsAndCategories();
