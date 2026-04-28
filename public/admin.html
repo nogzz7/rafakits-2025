@@ -512,7 +512,7 @@
       background: var(--white);
       border-radius: 24px;
       width: 90%;
-      max-width: 800px;
+      max-width: 900px;
       max-height: 90vh;
       overflow-y: auto;
       padding: 2rem;
@@ -670,6 +670,42 @@
       text-align: center;
       color: var(--gray-600);
     }
+
+    /* estilos para itens do pedido manual */
+    .order-items-list {
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .order-items-header {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1fr 40px;
+      background: var(--gray-100);
+      padding: 0.75rem;
+      font-weight: 600;
+      gap: 0.5rem;
+    }
+    .order-item-row {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1fr 40px;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--gray-200);
+      align-items: center;
+    }
+    .order-item-row select, .order-item-row input {
+      width: 100%;
+      padding: 0.4rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+    }
+    .order-total {
+      text-align: right;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -818,7 +854,12 @@
 
         <!-- Pedidos -->
         <div id="orders-section" class="page-section" style="display:none;">
-          <h2 style="margin-bottom:2rem;">Pedidos</h2>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+            <h2>Pedidos</h2>
+            <button class="btn btn-primary" onclick="showAddOrderModal()">
+              <i class="fas fa-plus"></i> Novo Pedido Manual
+            </button>
+          </div>
           <div class="filters">
             <div class="filter-group">
               <label>Data</label>
@@ -1131,6 +1172,54 @@
     </div>
   </div>
 
+  <!-- Modal Pedido Manual -->
+  <div class="modal-overlay" id="order-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Novo Pedido Manual</h2>
+        <button class="close-btn" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="manual-order-form" onsubmit="createManualOrder(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nome do Cliente *</label>
+            <input type="text" id="order-customer-name" required>
+          </div>
+          <div class="form-group">
+            <label>Telefone *</label>
+            <input type="text" id="order-customer-phone" required>
+          </div>
+          <div class="form-group">
+            <label>Email (opcional)</label>
+            <input type="email" id="order-customer-email">
+          </div>
+        </div>
+
+        <label><strong>Itens do Pedido</strong></label>
+        <div class="order-items-list" id="order-items-container">
+          <div class="order-items-header">
+            <span>Produto</span>
+            <span>Quantidade</span>
+            <span>Preço (R$)</span>
+            <span></span>
+          </div>
+          <div id="order-items-rows"></div>
+        </div>
+        <button type="button" class="btn btn-outline btn-small" onclick="addOrderItemRow()" style="margin-bottom:1rem;">
+          <i class="fas fa-plus"></i> Adicionar item
+        </button>
+
+        <div class="order-total">
+          Total do pedido: <strong id="order-total-display">R$ 0,00</strong>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeOrderModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Loading e Notificação -->
   <div class="loading" id="loading">
     <div class="spinner"></div>
@@ -1248,16 +1337,16 @@
               <button class="stock-btn" onclick="updateStock('${p.id}', ${p.inventory + 1})">+</button>
               <button class="stock-btn" onclick="updateStock('${p.id}', ${p.inventory - 1})">-</button>
             </div>
-          </td>
+           </td>
           <td>
             ${p.inventory === 0 ? '<span class="badge badge-danger">Esgotado</span>' : p.inventory < 10 ? '<span class="badge badge-warning">Baixo</span>' : '<span class="badge badge-success">OK</span>'}
             ${!p.available ? '<br><span class="badge">Inativo</span>' : ''}
-          </td>
+           </td>
           <td>
             <button class="btn btn-outline btn-small" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
             <button class="btn btn-danger btn-small" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
-          </td>
-        </td>`;
+           </td>
+        </tr>`;
       }).join('');
     }
 
@@ -1629,13 +1718,191 @@
         container.innerHTML = '<p style="padding:2rem; text-align:center;">Nenhum pedido recente</p>';
         return;
       }
-      let html = '</table><thead><tr><th>Cliente</th><th>Data</th><th>Total</th><th>Status</th></tr></thead><tbody>';
+      let html = '<table><thead><tr><th>Cliente</th><th>Data</th><th>Total</th><th>Status</th></tr></thead><tbody>';
       recent.forEach(o => {
         const total = toNumber(o.total_amount);
         html += `<tr><td>${o.customer_name}</td><td>${new Date(o.created_at).toLocaleDateString()}</td><td>R$ ${total.toFixed(2)}</td><td><span class="badge ${getStatusClass(o.status)}">${o.status}</span></td></tr>`;
       });
       html += '</tbody></table>';
       container.innerHTML = html;
+    }
+
+    // ========== PEDIDO MANUAL ==========
+    let orderItems = [];
+
+    function showAddOrderModal() {
+      // reset
+      orderItems = [];
+      document.getElementById('order-customer-name').value = '';
+      document.getElementById('order-customer-phone').value = '';
+      document.getElementById('order-customer-email').value = '';
+      renderOrderItemsRows();
+      updateOrderTotalDisplay();
+      document.getElementById('order-modal').classList.add('active');
+    }
+
+    function closeOrderModal() {
+      document.getElementById('order-modal').classList.remove('active');
+    }
+
+    function renderOrderItemsRows() {
+      const container = document.getElementById('order-items-rows');
+      if (orderItems.length === 0) {
+        container.innerHTML = '<div class="info-box" style="grid-column:1/-1; margin:0.5rem;">Adicione pelo menos um produto.</div>';
+        return;
+      }
+      container.innerHTML = orderItems.map((item, idx) => {
+        // cria select com opções de produtos
+        let productOptions = '<option value="">Selecione</option>';
+        products.forEach(p => {
+          productOptions += `<option value="${p.id}" data-price="${p.price}" data-name="${p.name.replace(/"/g, '&quot;')}" ${item.productId == p.id ? 'selected' : ''}>${p.name} (R$ ${p.price.toFixed(2)})</option>`;
+        });
+        return `
+          <div class="order-item-row" data-idx="${idx}">
+            <select class="order-item-product" data-idx="${idx}" onchange="updateOrderItem(${idx}, 'productId', this.value)">
+              ${productOptions}
+            </select>
+            <input type="number" class="order-item-qty" value="${item.quantity}" min="1" onchange="updateOrderItem(${idx}, 'quantity', this.value)">
+            <input type="number" step="0.01" class="order-item-price" value="${item.price}" onchange="updateOrderItem(${idx}, 'price', this.value)">
+            <button type="button" class="btn btn-danger btn-small" onclick="removeOrderItem(${idx})"><i class="fas fa-trash"></i></button>
+          </div>
+        `;
+      }).join('');
+      // recarregar eventos de preenchimento automático de preço ao selecionar produto
+      document.querySelectorAll('.order-item-product').forEach(select => {
+        select.addEventListener('change', (e) => {
+          const idx = select.getAttribute('data-idx');
+          const selectedOption = select.options[select.selectedIndex];
+          const price = parseFloat(selectedOption.getAttribute('data-price'));
+          if (!isNaN(price) && price > 0) {
+            orderItems[idx].price = price;
+            document.querySelector(`.order-item-price[data-idx="${idx}"]`).value = price.toFixed(2);
+            updateOrderTotalDisplay();
+          }
+        });
+      });
+    }
+
+    function addOrderItemRow() {
+      orderItems.push({
+        productId: '',
+        name: '',
+        quantity: 1,
+        price: 0
+      });
+      renderOrderItemsRows();
+    }
+
+    function updateOrderItem(idx, field, value) {
+      if (field === 'productId') {
+        const product = products.find(p => p.id == value);
+        if (product) {
+          orderItems[idx].productId = product.id;
+          orderItems[idx].name = product.name;
+          orderItems[idx].price = product.price;
+        } else {
+          orderItems[idx].productId = '';
+          orderItems[idx].name = '';
+          orderItems[idx].price = 0;
+        }
+      } else if (field === 'quantity') {
+        let qty = parseInt(value);
+        if (isNaN(qty) || qty < 1) qty = 1;
+        orderItems[idx].quantity = qty;
+      } else if (field === 'price') {
+        let price = parseFloat(value);
+        if (isNaN(price)) price = 0;
+        orderItems[idx].price = price;
+      }
+      updateOrderTotalDisplay();
+      renderOrderItemsRows(); // re-render para atualizar valores exibidos nos campos
+    }
+
+    function removeOrderItem(idx) {
+      orderItems.splice(idx, 1);
+      renderOrderItemsRows();
+      updateOrderTotalDisplay();
+    }
+
+    function updateOrderTotalDisplay() {
+      let total = 0;
+      orderItems.forEach(item => {
+        total += item.quantity * item.price;
+      });
+      document.getElementById('order-total-display').innerText = `R$ ${total.toFixed(2)}`;
+    }
+
+    async function createManualOrder(e) {
+      e.preventDefault();
+      const customerName = document.getElementById('order-customer-name').value.trim();
+      const customerPhone = document.getElementById('order-customer-phone').value.trim();
+      const customerEmail = document.getElementById('order-customer-email').value.trim();
+      if (!customerName || !customerPhone) {
+        showNotification('Preencha nome e telefone do cliente', 'error');
+        return;
+      }
+      if (orderItems.length === 0) {
+        showNotification('Adicione pelo menos um item ao pedido', 'error');
+        return;
+      }
+      // validar se todos os itens têm produto selecionado e quantidade >0
+      for (let item of orderItems) {
+        if (!item.productId) {
+          showNotification('Todos os itens devem ter um produto selecionado', 'error');
+          return;
+        }
+        if (item.quantity < 1) {
+          showNotification('Quantidade deve ser maior que zero', 'error');
+          return;
+        }
+        // verificar estoque
+        const product = products.find(p => p.id == item.productId);
+        if (!product || product.inventory < item.quantity) {
+          showNotification(`Estoque insuficiente para ${product?.name || 'produto'}`, 'error');
+          return;
+        }
+      }
+
+      showLoading();
+      try {
+        // 1. Criar o pedido
+        const orderData = {
+          customer_name: customerName,
+          customer_phone: customerPhone,
+          customer_email: customerEmail,
+          items: orderItems.map(item => ({
+            product_id: item.productId,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+          })),
+          total_amount: orderItems.reduce((sum, i) => sum + (i.price * i.quantity), 0),
+          status: 'pending',
+          created_at: new Date().toISOString()
+        };
+        const newOrder = await api('POST', 'orders', orderData);
+        
+        // 2. Atualizar estoque de cada produto
+        for (let item of orderItems) {
+          const product = products.find(p => p.id == item.productId);
+          if (product) {
+            const newInventory = product.inventory - item.quantity;
+            await updateStock(product.id, newInventory);
+          }
+        }
+        
+        // 3. Recarregar dados
+        await loadOrders();
+        await loadProducts();
+        await loadStats();  // atualiza dashboard
+        closeOrderModal();
+        showNotification('Pedido criado com sucesso!', 'success');
+      } catch (err) {
+        console.error(err);
+        showNotification('Erro ao criar pedido: ' + err.message, 'error');
+      } finally {
+        hideLoading();
+      }
     }
 
     // ========== CUPONS ==========
@@ -1662,7 +1929,7 @@
           <td>
             <button class="btn btn-outline btn-small" onclick="editCoupon('${c.id}')"><i class="fas fa-edit"></i></button>
             <button class="btn btn-danger btn-small" onclick="deleteCoupon('${c.id}')"><i class="fas fa-trash"></i></button>
-          </td>
+           </td>
         </tr>
       `).join('');
     }
